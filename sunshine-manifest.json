@@ -1,0 +1,21 @@
+{
+ "name": "Sunshine CBT — Sunshine International School, Eket",
+ "short_name": "Sunshine CBT",
+ "description": "SS3 CBT examination practice for WAEC, NECO and JAMB. Sample demo.",
+ "start_url": ".",
+ "display": "standalone",
+ "background_color": "#0c3a1c",
+ "theme_color": "#0c3a1c",
+ "icons": [
+  {
+   "src": "sunshine-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "sunshine-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}
