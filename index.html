@@ -306,7 +306,7 @@ body{padding-bottom:64px}
 <div id="s-mock" class="hidden">
 <button class="back" onclick="show('home')">&#8592; Home</button>
 <div class="card">
-<h2>&#127891; Mini Mock UTME</h2><p class="sub" style="color:#a86a00;font-weight:700">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
+<h2>&#127891; Mini Mock UTME</h2>
 <p class="sub">English is compulsory (15 questions). Pick exactly 3 more subjects &mdash; 15 questions each. One timer: 30 minutes for all 60 questions. No answers shown until the end, and when time runs out the exam submits itself.</p>
 <div class="mockgrid" id="mockGrid"></div>
 <p class="sub" id="mockCount">Picked: 0 of 3</p>
@@ -345,9 +345,8 @@ body{padding-bottom:64px}
 <div class="exam" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v17.0</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v17.1</b></p>
 <p class="sub" id="trialNote" style="display:none;color:#f7d774;font-weight:700"></p>
-<p style="text-align:center;color:#f7d774;font-weight:700;margin:10px 0;font-size:.85rem">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="inviteFriends()">&#128172; Invite friends</button></div>
@@ -867,7 +866,7 @@ function adPayLoad(){if(!$('adPayRows'))return;
  fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'pending',token:TOKEN})}).then(function(r){return r.json()}).then(function(j){
   if(j.err){$('adPayRows').innerHTML='<p class="sub">'+j.err+'</p>';return}
   $('adPayRows').innerHTML=j.rows&&j.rows.length?j.rows.map(function(t){
-   return '<div class="payrow"><b>'+t.txn+'</b> '+naira(t.amount)+'<br><small>'+t.name+' ('+t.email+')<br>'+t.exams+' '+t.period+'<br>Uploaded '+new Date(t.uploaded).toLocaleString()+'</small>'+
+   return '<div class="payrow"><b>'+t.txn+'</b> '+naira(t.amount)+'<br><small>'+t.name+' ('+t.email+')<br>'+t.exams+' '+t.period+'<br>Uploaded '+new Date(t.uploaded).toLocaleString()+(t.heard?'<br>How they heard: <b>'+t.heard+'</b>':'')+(t.split?'<br>Split: <b>'+naira(t.split.sam)+'</b> to you ('+t.split.pct+'%) &middot; <b>'+naira(t.split.ptn)+'</b> to partner':'')+'</small>'+
    '<img class="proofimg" src="'+t.img+'" onclick="window.open(\''+t.txn+'\')">'+
    '<div style="display:flex;gap:8px;margin-top:6px"><button class="btn gold" style="flex:1" onclick="adPayAct(\''+t.txn+'\',\'activate\')">Activate '+t.txn+'</button>'+
    '<button class="btn" style="flex:1;background:#7f1d1d" onclick="adPayAct(\''+t.txn+'\',\'reject\')">Reject</button></div></div>'}).join(''):'<p class="sub">No payments waiting.</p>'})
