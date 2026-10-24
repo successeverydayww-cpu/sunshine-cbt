@@ -266,7 +266,15 @@ body{padding-bottom:64px}
 <div id="adStats" class="adstats"></div>
 </div>
 <div class="card" id="adIncomeCard"></div>
-<div class="card"><h3>&#128176; Subscription payments</h3><p class="sub">Students who uploaded transfer screenshots appear here. Check the screenshot, then activate.</p><div id="adPayRows"></div></div>
+<div class="card">
+<h3>&#128176; Subscriptions</h3>
+<div style="display:flex;gap:8px;margin:8px 0 12px">
+<button class="btn" style="flex:1" onclick="adShow('subs')">&#128101; Subscriptions</button>
+<button class="btn" style="flex:1" onclick="adShow('reqs')">&#128229; Subscription requests</button>
+</div>
+<div id="adSubsBox" style="display:none"></div>
+<div id="adPayBox" style="display:none"></div>
+</div>
 <div class="card">
 <h3>Admins</h3>
 <p class="sub">Make an admin: the person must first sign up and verify their email in the app.</p>
@@ -334,7 +342,7 @@ body{padding-bottom:64px}
 <div class="exam" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v15</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v15.1</b></p>
 <p style="text-align:center;color:#f7d774;font-weight:700;margin:10px 0;font-size:.85rem">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -495,7 +503,7 @@ function playTopic(id){
  show('player');
 }
 /* ---- admin + danger zone + invite ---- */
-function openAdmin(){show('admin');$('adStats').innerHTML='<p class="sub">Loading...</p>';$('adPayRows').innerHTML='<p class="sub">Loading...</p>';adPayLoad();
+function openAdmin(){show('admin');$('adStats').innerHTML='<p class="sub">Loading...</p>';var pb=$('adPayRows');if(pb)pb.innerHTML='';
  api({act:'admin',token:TOKEN}).then(function(x){
   if(!x.ok){$('adStats').textContent=x.err;return}
   var s=x.j.stats;
@@ -742,9 +750,9 @@ function subRender(){
  var names={jamb:'JAMB',waec:'WAEC',neco:'NECO',utme:'Post-UTME'};
  var st='';
  if(isBoss()){st='<p class="sub">You are an admin: full access, no subscription needed.</p>'}
- else if(SUBS&&Object.keys(SUBS).length){st='<p class="sub" style="color:#f5c518;font-weight:700">ACTIVE</p>';
+ if(SUBS&&Object.keys(SUBS).length){st+='<p class="sub" style="color:#f5c518;font-weight:700">ACTIVE</p>';
   Object.keys(SUBS).forEach(function(k){st+='<div class="txnline"><b>'+names[k]+'</b> till '+String(SUBS[k]).slice(0,10)+' (all videos included)</div>'})}
- else{st='<p class="sub">No active subscription. Subscribe below: 1,500 per exam type per month, discounts for bundles, videos included.</p>'}
+ if(!isBoss()&&!Object.keys(SUBS||{}).length){st='<p class="sub">No active subscription. Subscribe below: 1,500 per exam type per month, discounts for bundles, videos included.</p>'}
  $('subStatus').innerHTML=st;
  $('subExams').innerHTML=Object.keys(names).map(function(k){return '<div class="exam '+(SUB.exams[k]?'on':'off')+'" onclick="subToggle(\''+k+'\')"><b>'+names[k]+'</b><small>'+(SUB.exams[k]?'selected':'tap to add')+'</small></div>'}).join('');
  var ps=[['monthly','1 month'],['quarterly','3 months'],['yearly','12 months']];
@@ -799,7 +807,20 @@ function subTxns(){if(!TOKEN)return;
   var col={awaiting:'#9fd8ae',pending:'#f5c518',active:'#4ade80',rejected:'#f87171',expired:'#f87171'};
   $('subTxns').innerHTML=(j.txns&&j.txns.length)?j.txns.map(function(t){return '<div class="txnline"><b>'+t.txn+'</b> '+t.exams+' '+t.period+' '+naira(t.amount)+' <b style="color:'+col[t.status]+'">'+lbl[t.status]+'</b></div>'}).join(''):'<p class="sub">No payments yet.</p>'})
  .catch(function(){})}
-function adPayLoad(){
+function adShow(which){
+ var subs=$('adSubsBox'),reqs=$('adPayBox');
+ if(which==='subs'){reqs.style.display='none';subs.style.display='block';subs.innerHTML='<p class="sub">Loading...</p>';
+  fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'subscribers',token:TOKEN})}).then(function(r){return r.json()}).then(function(j){
+   if(j.err){subs.innerHTML='<p class="sub">'+j.err+'</p>';return}
+   var names={jamb:'JAMB',waec:'WAEC',neco:'NECO',utme:'Post-UTME'};
+   subs.innerHTML=(j.rows&&j.rows.length)?j.rows.map(function(r){
+    var ex=Object.keys(r.subs).map(function(k){return '<b style="color:#4ade80">'+names[k]+'</b> till '+String(r.subs[k]).slice(0,10)}).join(' &middot; ');
+    return '<div class="payrow"><b>'+r.name+'</b>'+(r.cls?' ('+r.cls+')':'')+'<br><small>'+r.email+'</small><br>'+ex+'</div>'}).join(''):'<p class="sub">No active subscriptions yet. They appear here the moment you activate a student.</p>'})
+  .catch(function(){subs.innerHTML='<p class="sub">Network error.</p>'});return}
+ reqs.style.display='block';subs.style.display='none';
+ if(!$('adPayRows')){reqs.innerHTML='<div id="adPayRows"></div>'}
+ adPayLoad()}
+function adPayLoad(){if(!$('adPayRows'))return;
  fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'pending',token:TOKEN})}).then(function(r){return r.json()}).then(function(j){
   if(j.err){$('adPayRows').innerHTML='<p class="sub">'+j.err+'</p>';return}
   $('adPayRows').innerHTML=j.rows&&j.rows.length?j.rows.map(function(t){
