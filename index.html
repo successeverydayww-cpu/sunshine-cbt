@@ -342,7 +342,7 @@ body{padding-bottom:64px}
 <div class="exam" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v15.1</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v15.2</b></p>
 <p style="text-align:center;color:#f7d774;font-weight:700;margin:10px 0;font-size:.85rem">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -710,8 +710,9 @@ document.getElementById('crsRec').classList.remove('hidden');
 document.getElementById('crsRec').innerHTML='<div class="recbox"><h3>'+c+'</h3><p class="sub">JAMB subject combination:</p><div class="chips" id="recChips">'+ids.map(function(id){var s=subjById(id);return '<div class="chip rec" onclick="utmeGo([\''+id+'\'])">'+(s?s.name:id)+'</div>'}).join('')+'</div><p class="sub" style="margin:8px 0">Tap a subject to practise it alone, or use the button to practise all four mixed, just like the real Post-UTME.</p><button class="btn gold" onclick="utmeGo(0)" style="width:100%">Practise All 4 Subjects</button><p class="sub" style="margin:10px 0 4px">Or sit the full school format:</p><button class="btn gold" onclick="utmeMock()" style="width:100%">School Post-UTME Mock &middot; 60q &middot; 30 min</button></div>';
 document.getElementById('crsRec').scrollIntoView({behavior:'smooth'})}
 
+function utmeHard(qs){var hard=qs.filter(function(q){return (q.d||1)>=4});return hard.length>=30?hard:qs}
 function utmeMock(){if(!bankGuard(utmeMock))return;var ids=recSubs(UTME.course);var pool=[];
- ids.forEach(function(id){var s=subjById(id);if(s)pool=pool.concat(rampPick(s.qs,Math.min(15,s.qs.length),'SMOCK|'+UTME.course+'|'+id))});
+ ids.forEach(function(id){var s=subjById(id);if(s)pool=pool.concat(rampPick(utmeHard(s.qs),Math.min(15,s.qs.length),'SMOCK|'+UTME.course+'|'+id))});
  pool.sort(function(a,b){return (a.d||1)-(b.d||1)});
  noteSeen();
  MODE='mock';picks.order=pool;picks.idx=0;picks.chosen=new Array(pool.length).fill(-1);
@@ -870,7 +871,7 @@ document.getElementById('countSub').textContent=(m==='practice')?'Question Pract
 document.getElementById('startBtn').textContent=(m==='practice')?'Start Practice':'Start Timed CBT Test'}
 function startTest(){if(!bankGuard(startTest))return;var s;if(picks.subj==='multi'&&picks.multi){var qs=[];picks.multi.forEach(function(id){var x=BANK.subjects.find(function(y){return y.id===id});if(x)qs=qs.concat(x.qs)});s={name:picks.course||'Post-UTME',qs:qs}}else s=BANK.subjects.find(function(x){return x.id===picks.subj});
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
-var pool=rampPick(s.qs,Math.min(picks.count,s.qs.length),tKey());
+var pool=rampPick(EXAM==='Post-UTME'?utmeHard(s.qs):s.qs,Math.min(picks.count,s.qs.length),tKey());
 picks.order=pool;picks.idx=0;picks.chosen=new Array(picks.order.length).fill(-1);
 noteSeen();picks.t0=Date.now();show('quiz');renderQ();
 document.getElementById('timer').style.display=(MODE==='cbt'||MODE==='mock')?'block':'none';
