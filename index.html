@@ -334,7 +334,7 @@ body{padding-bottom:64px}
 <div class="exam" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v14</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v14.1</b></p>
 <p style="text-align:center;color:#f7d774;font-weight:700;margin:10px 0;font-size:.85rem">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -1035,7 +1035,7 @@ function liveAsk(t){var id=++LIVESEQ;
 var ty=document.createElement('div');ty.className='msg bot';ty.id='ty'+id;ty.textContent='Sunshine Agent is thinking\u2026';
 var log=document.getElementById('clog');log.appendChild(ty);log.scrollTop=1e9;
 var ctl=null;try{ctl=new AbortController()}catch(e){}
-var tm=null;if(ctl)tm=setTimeout(function(){try{ctl.abort()}catch(e){}},150000);
+var tm=null;if(ctl)tm=setTimeout(function(){try{ctl.abort()}catch(e){}},25000);
 fetch('https://sunshine-cbt.successeverydayww-cpu.workers.dev/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:t,ctx:AGQ?{q:AGQ.q,o:AGQ.o,a:AGQ.o[AGQ.a],e:AGQ.e,s:AGQ.s}:null}),signal:ctl?ctl.signal:undefined})
 .then(function(r){if(!r.ok)throw 0;return r.json()})
 .then(function(j){if(id!==LIVESEQ)return;var e=document.getElementById('ty'+id);if(e&&e.parentNode)e.parentNode.removeChild(e);
@@ -1044,7 +1044,7 @@ if(j&&j.reply){addMsg(j.reply,'bot');speak(j.reply)}else{localAnswer(t)}})
 .then(function(){if(tm)clearTimeout(tm)})}
 function smalltalk(t){
 if(/thank|thanks|appreciate|god bless/.test(t))return ['You are welcome! Keep going, you are doing great.','Anytime! Ask me anything else.','Glad to help. Onward to the next question!'][Math.floor(Math.random()*3)];
-if(/\b(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(t)||/how are you|whats up|how far/.test(t))return 'Hello! I am the Sunshine Agent, always here. Ask me about any subject, or open a question and ask me about it.';
+if(/\b(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(t)||/how are you|whats up|how far/.test(t))return 'I am doing well, thank you! Always here and ready to help you study. How can I help you today?';
 if(/bye|goodbye|good night|see you later/.test(t))return 'Goodbye! Practise a little every day and the exam will respect you. See you soon.';
 if(/who are you|who made|who built|samuel/.test(t))return 'I am the Sunshine Agent of Sunshine International School, Eket. This app was built by Samuel Amos.';
 if(/how do i|how to|use this|guide me/.test(t)&&t.length<30)return 'Pick JAMB or WAEC, choose a subject, then choose Question Practice or CBT Test. Every answer comes with a full breakdown, and you can ask me about any question, by voice or by typing.';
@@ -1053,10 +1053,9 @@ if(/what can you do|your features|what do you do/.test(t))return 'I explain any 
 if(/good|great|smart|clever|well done|nice|amazing|proud/.test(t)&&t.length<25)return 'Thank you! I am here to make you pass in flying colours. Ask me anything.';
 if(/^(ok|okay|alright|i understand|understood|makes sense|cool|yes|yeah)$/.test(t))return 'Excellent! Move on, or ask me for the working on any question.';
 return null}
-function answer(raw){var t=norm(raw);
-var st=smalltalk(t);if(st){addMsg(st,'bot');speak(st);return}
-liveAsk(t)}
+function answer(raw){var t=norm(raw);liveAsk(t)}
 function localAnswer(t){if(AGQ){deepAnswer(t);return}
+var st=smalltalk(t);if(st){addMsg(st,'bot');speak(st);return}
 var best=null,bs=0;
 if(/\b(who are you|who made|who built|samuel)\b/.test(t)){var w='I am the Sunshine Agent of Sunshine International School, Eket. This app was built by Samuel Amos.';addMsg(w,'bot');speak(w);return}
 if(/\b(how do i|how to|use this|help)\b/.test(t)&&t.length<30){var h='Pick JAMB, choose a subject, choose how many questions, and take the timed test. Every answer comes with a full explanation.';addMsg(h,'bot');speak(h);return}
