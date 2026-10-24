@@ -312,10 +312,10 @@ body{padding-bottom:64px}
 <div class="exam on" onclick="pickExam('WAEC')"><b>WAEC</b><small>WASSCE Practice &middot; LIVE</small></div>
 </div>
 <div class="examrow">
-<div class="exam off"><b>NECO</b><small>Coming soon</small></div>
+<div class="exam" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam off"><b>POST-UTME</b><small>Coming soon</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB and WAEC practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v10.8</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v11</b></p>
 <p style="text-align:center;color:#f7d774;font-weight:700;margin:10px 0;font-size:.85rem">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -407,7 +407,7 @@ function show(s){['login','verify','setpw','profile','home','subj','mode','count
 try{var _q=['subj','mode','count','quiz','done'].indexOf(s)>=0,_b=document.querySelector('.bgfx'),_g=document.querySelector('.glow');
 if(_b)_b.style.display=_q?'none':'';if(_g)_g.style.display=_q?'none':'';
 if(_q){var _w=document.getElementById('s-'+s);_w.style.background='linear-gradient(180deg,#0c3a1c,#092b15)';_w.style.minHeight='101vh'}}catch(x){}
-/* v10.8 forced repaint: some Android GPUs skip rasterizing newly-shown content until a paint kick */
+/* v11 forced repaint: some Android GPUs skip rasterizing newly-shown content until a paint kick */
 try{void document.body.offsetHeight;document.body.style.opacity='0.999';
 setTimeout(function(){try{document.body.style.opacity='1';void document.body.offsetHeight}catch(e){}},60);
 window.scrollTo(0,1);setTimeout(function(){try{window.scrollTo(0,0)}catch(e){}},40);
@@ -661,11 +661,11 @@ if(vis&&t&&!covered){dbg('')}else{
  c.style.position='relative';c.style.zIndex='99';
  if(covered){try{if(el&&document.getElementById('s-quiz').contains(el)){el.style.display='none'}}catch(e2){}}
  c.style.willChange='transform';setTimeout(function(){try{c.style.willChange=''}catch(x){}},700);
- dbg('v10.8 Q'+(picks.idx+1)+' top:'+Math.round(r.top)+' h:'+Math.round(r.height)+' w:'+Math.round(r.width)+' L:'+Math.round(r.left)+(t?'':' NOTEXT')+(covered?' COVERED-BY:'+String(el.id||el.className||el.tagName).slice(0,20):'')+' tap:'+(el?String(el.id||el.className||el.tagName).slice(0,14):'-'));
+ dbg('v11 Q'+(picks.idx+1)+' top:'+Math.round(r.top)+' h:'+Math.round(r.height)+' w:'+Math.round(r.width)+' L:'+Math.round(r.left)+(t?'':' NOTEXT')+(covered?' COVERED-BY:'+String(el.id||el.className||el.tagName).slice(0,20):'')+' tap:'+(el?String(el.id||el.className||el.tagName).slice(0,14):'-'));
  setTimeout(qWatch,1500);
 }}catch(e){}}
 function dbg(s){var d=document.getElementById('qdbg');if(!d)return;d.textContent=s||'';d.style.display=s?'block':'none'}
-var WERR=0;function werr(m){WERR++;try{var g=document.getElementById('gdbg');if(!g){g=document.createElement('div');g.id='gdbg';g.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(140,0,0,.94);color:#fff;font:700 12px/1.4 system-ui;padding:8px 10px';(document.body||document.documentElement).appendChild(g)}g.textContent='v10.8 ERROR '+WERR+': '+m;dbg('v10.8 JS ERROR: '+m)}catch(e){}}
+var WERR=0;function werr(m){WERR++;try{var g=document.getElementById('gdbg');if(!g){g=document.createElement('div');g.id='gdbg';g.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(140,0,0,.94);color:#fff;font:700 12px/1.4 system-ui;padding:8px 10px';(document.body||document.documentElement).appendChild(g)}g.textContent='v11 ERROR '+WERR+': '+m;dbg('v11 JS ERROR: '+m)}catch(e){}}
 window.addEventListener('error',function(e){werr((e&&e.message?e.message:'unknown')+(e&&e.lineno?' (line '+e.lineno+')':''))});
 window.addEventListener('unhandledrejection',function(e){werr('P: '+String(e&&e.reason||''))});
 function pick(k){if(picks.locked)return;picks.locked=true;picks.chosen[picks.idx]=k;var q=picks.order[picks.idx];
@@ -816,6 +816,18 @@ else if(/more|deeper|detail|elaborate|expand/.test(t)){m='Let me go deeper.\n\nT
 else if(/why/.test(t)){var others=opts.split('\n').filter(function(l){return l.indexOf(letter+'. ')!==0}).join('\n');m='Why '+letter+' is correct:\n\n'+q.e+'\n\nThe other options do not fit:\n'+others+'\n\nEach of those either applies the wrong rule or answers a different question.'}
 else{m='For this question the answer is '+letter+'. '+q.o[q.a]+'.\n\n'+q.e+'\n\nAsk me: "show me the working", "explain it simply" or "go deeper".'}
 addMsg(m,'bot');speak(m)}
+var LIVESEQ=0;
+function liveAsk(t){var id=++LIVESEQ;
+var ty=document.createElement('div');ty.className='msg bot';ty.id='ty'+id;ty.textContent='Sunshine Agent is thinking\u2026';
+var log=document.getElementById('clog');log.appendChild(ty);log.scrollTop=1e9;
+var ctl=null;try{ctl=new AbortController()}catch(e){}
+var tm=null;if(ctl)tm=setTimeout(function(){try{ctl.abort()}catch(e){}},60000);
+fetch('https://sunshine-cbt.successeverydayww-cpu.workers.dev/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:t,ctx:AGQ?{q:AGQ.q,o:AGQ.o,a:AGQ.o[AGQ.a],e:AGQ.e,s:AGQ.s}:null}),signal:ctl?ctl.signal:undefined})
+.then(function(r){if(!r.ok)throw 0;return r.json()})
+.then(function(j){if(id!==LIVESEQ)return;var e=document.getElementById('ty'+id);if(e&&e.parentNode)e.parentNode.removeChild(e);
+if(j&&j.reply){addMsg(j.reply,'bot');speak(j.reply)}else{localAnswer(t)}})
+.catch(function(){if(id!==LIVESEQ)return;var e=document.getElementById('ty'+id);if(e&&e.parentNode)e.parentNode.removeChild(e);localAnswer(t)})
+.then(function(){if(tm)clearTimeout(tm)})}
 function smalltalk(t){
 if(/thank|thanks|appreciate|god bless/.test(t))return ['You are welcome! Keep going, you are doing great.','Anytime! Ask me anything else.','Glad to help. Onward to the next question!'][Math.floor(Math.random()*3)];
 if(/\b(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(t)||/how are you|whats up|how far/.test(t))return 'Hello! I am the Sunshine Agent, always here. Ask me about any subject, or open a question and ask me about it.';
@@ -829,7 +841,8 @@ if(/^(ok|okay|alright|i understand|understood|makes sense|cool|yes|yeah)$/.test(
 return null}
 function answer(raw){var t=norm(raw);
 var st=smalltalk(t);if(st){addMsg(st,'bot');speak(st);return}
-if(AGQ){deepAnswer(t);return}
+liveAsk(t)}
+function localAnswer(t){if(AGQ){deepAnswer(t);return}
 var best=null,bs=0;
 if(/\b(who are you|who made|who built|samuel)\b/.test(t)){var w='I am the Sunshine Agent of Sunshine International School, Eket. This app was built by Samuel Amos.';addMsg(w,'bot');speak(w);return}
 if(/\b(how do i|how to|use this|help)\b/.test(t)&&t.length<30){var h='Pick JAMB, choose a subject, choose how many questions, and take the timed test. Every answer comes with a full explanation.';addMsg(h,'bot');speak(h);return}
