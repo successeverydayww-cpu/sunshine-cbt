@@ -1,7 +1,7 @@
 {
- "name": "Sunshine CBT — Sunshine International School, Eket",
- "short_name": "Sunshine CBT",
- "description": "SS3 CBT examination practice for WAEC, NECO and JAMB. Sample demo.",
+ "name": "Prime Scholars LT — Learning Technologies",
+ "short_name": "Prime Scholars",
+ "description": "CBT examination practice for JAMB, WAEC and NECO, with video classes and a live study agent.",
  "start_url": ".",
  "display": "standalone",
  "background_color": "#0c3a1c",
