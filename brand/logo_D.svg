@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <rect width="600" height="600" fill="#ffffff"/>
+  <!-- laurel left -->
+  <g fill="#0c3a1c">
+    <ellipse cx="180" cy="330" rx="46" ry="14" transform="rotate(45 180 330)"/>
+    <ellipse cx="163" cy="292" rx="46" ry="14" transform="rotate(30 163 292)"/>
+    <ellipse cx="153" cy="250" rx="46" ry="14" transform="rotate(15 153 250)"/>
+    <ellipse cx="152" cy="207" rx="46" ry="14"/>
+    <ellipse cx="160" cy="165" rx="46" ry="14" transform="rotate(-15 160 165)"/>
+    <ellipse cx="176" cy="126" rx="46" ry="14" transform="rotate(-30 176 126)"/>
+    <ellipse cx="200" cy="92" rx="46" ry="14" transform="rotate(-45 200 92)"/>
+  </g>
+  <!-- laurel right (mirror) -->
+  <g fill="#0c3a1c">
+    <ellipse cx="420" cy="330" rx="46" ry="14" transform="rotate(-45 420 330)"/>
+    <ellipse cx="437" cy="292" rx="46" ry="14" transform="rotate(-30 437 292)"/>
+    <ellipse cx="447" cy="250" rx="46" ry="14" transform="rotate(-15 447 250)"/>
+    <ellipse cx="448" cy="207" rx="46" ry="14"/>
+    <ellipse cx="440" cy="165" rx="46" ry="14" transform="rotate(15 440 165)"/>
+    <ellipse cx="424" cy="126" rx="46" ry="14" transform="rotate(30 424 126)"/>
+    <ellipse cx="400" cy="92" rx="46" ry="14" transform="rotate(45 400 92)"/>
+  </g>
+  <!-- torch -->
+  <rect x="288" y="220" width="24" height="150" rx="8" fill="#0c3a1c"/>
+  <path d="M272 220 Q300 250 328 220 Q328 170 300 150 Q272 170 272 220 Z" fill="#f5b70a"/>
+  <path d="M272 220 Q300 250 328 220 Q300 235 272 220" fill="#f5b70a"/>
+  <!-- A+ flame core -->
+  <text x="300" y="205" text-anchor="middle" font-family="Georgia, serif" font-size="42" font-weight="bold" fill="#0c3a1c">A+</text>
+  <path d="M300 400 L270 430 L330 430 Z" fill="#0c3a1c"/>
+  <text x="300" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="46" font-weight="bold" fill="#0c3a1c" letter-spacing="3">PRIME SCHOLARS LT</text>
+  <line x1="150" y1="540" x2="450" y2="540" stroke="#f5b70a" stroke-width="5"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <rect width="600" height="600" fill="#ffffff"/>
+  <!-- laptop -->
+  <rect x="200" y="270" width="200" height="130" rx="10" fill="#1d6a34"/>
+  <rect x="214" y="284" width="172" height="102" rx="4" fill="#f4f1e6"/>
+  <path d="M172 408 L428 408 L448 428 L152 428 Z" fill="#0c3a1c"/>
+  <!-- screen: upward score arrows -->
+  <path d="M236 368 L266 322 L296 344 L326 290 L356 310" fill="none" stroke="#f5b70a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M336 288 L356 310 L332 322" fill="none" stroke="#f5b70a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- grad cap -->
+  <path d="M300 118 L430 168 L300 218 L170 168 Z" fill="#0c3a1c"/>
+  <path d="M246 190 L246 240 Q300 264 354 240 L354 190 L300 212 Z" fill="#1d6a34"/>
+  <circle cx="300" cy="118" r="8" fill="#f5b70a"/>
+  <line x1="430" y1="168" x2="430" y2="212" stroke="#f5b70a" stroke-width="5"/>
+  <circle cx="430" cy="220" r="9" fill="#f5b70a"/>
+  <text x="300" y="500" text-anchor="middle" font-family="Georgia, serif" font-size="54" font-weight="bold" fill="#0c3a1c" letter-spacing="2">Prime Scholars</text>
+  <text x="300" y="540" text-anchor="middle" font-family="Georgia, serif" font-size="26" fill="#b8860b" letter-spacing="8">LEARNING TECHNOLOGIES</text>
+</svg>

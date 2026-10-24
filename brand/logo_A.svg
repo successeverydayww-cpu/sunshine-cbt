@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <rect width="600" height="600" fill="#ffffff"/>
+  <!-- shield -->
+  <path d="M300 90 L440 140 L440 280 Q440 380 300 460 Q160 380 160 280 L160 140 Z" fill="#0c3a1c"/>
+  <path d="M300 108 L424 153 L424 280 Q424 371 300 442 Q176 371 176 280 L176 153 Z" fill="none" stroke="#f5b70a" stroke-width="6"/>
+  <!-- star -->
+  <path d="M300 150 L310 180 L342 180 L316 199 L326 229 L300 210 L274 229 L284 199 L258 180 L290 180 Z" fill="#f5b70a"/>
+  <!-- open book -->
+  <path d="M222 260 Q260 244 296 262 L296 340 Q260 322 226 336 Z" fill="#f4f1e6"/>
+  <path d="M378 260 Q340 244 304 262 L304 340 Q340 322 374 336 Z" fill="#f4f1e6"/>
+  <path d="M222 260 Q260 244 296 262 L296 340 Q260 322 226 336 Z" fill="none" stroke="#0c3a1c" stroke-width="4"/>
+  <path d="M378 260 Q340 244 304 262 L304 340 Q340 322 374 336 Z" fill="none" stroke="#0c3a1c" stroke-width="4"/>
+  <line x1="300" y1="262" x2="300" y2="340" stroke="#0c3a1c" stroke-width="5"/>
+  <text x="300" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="52" font-weight="bold" fill="#0c3a1c" letter-spacing="3">PRIME SCHOLARS</text>
+  <text x="300" y="560" text-anchor="middle" font-family="Georgia, serif" font-size="26" fill="#b8860b" letter-spacing="10">LEARNING TECHNOLOGIES</text>
+</svg>
