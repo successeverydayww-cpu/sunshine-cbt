@@ -181,11 +181,14 @@ body{padding-bottom:64px}
 </div>
 <div id="boxNew" class="hidden">
 <h2>Create your student account</h2>
-<p class="sub">We email a 6-digit code to confirm it is you. Then you set your own password.</p>
+<p class="sub">We email a 6-digit code to confirm it is you.</p>
 <input class="f" id="lName" placeholder="Full name">
 <input class="f" id="lContact" placeholder="Email address (same one you use for JAMB)" inputmode="email" type="email">
 <select class="f" id="lClass"><option value="">Select class</option><option>SS1</option><option>SS2</option><option>SS3</option></select>
 <select class="f" id="lArm"><option value="">Select class arm</option><option>Purple</option><option>Maroon</option><option>Indigo</option><option>Violet</option></select>
+<select class="f" id="lHeard"><option value="">How did you hear about the app?</option><option>Sunshine Secondary School</option><option>Animex Secondary School</option><option>Divine Seed Secondary School</option><option>AKSU University</option></select>
+<input class="f" id="lPass" placeholder="Create your password (at least 6 characters)" type="password" autocomplete="new-password">
+<label style="display:flex;gap:8px;align-items:flex-start;font-size:.85rem;margin:6px 0"><input type="checkbox" id="lAgree" style="margin-top:3px"> <span>I have read and accept the <a href="#" onclick="openPrivacy();return false" style="color:#0c3a1c;font-weight:700;text-decoration:underline">Terms &amp; Privacy Policy</a></span></label>
 <div class="err" id="lErr"></div>
 <button class="btn" id="btnSend" onclick="sendCode()">Send Verification Code</button>
 </div>
@@ -342,7 +345,8 @@ body{padding-bottom:64px}
 <div class="exam" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v16.0</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v17.0</b></p>
+<p class="sub" id="trialNote" style="display:none;color:#f7d774;font-weight:700"></p>
 <p style="text-align:center;color:#f7d774;font-weight:700;margin:10px 0;font-size:.85rem">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -381,10 +385,9 @@ body{padding-bottom:64px}
 <button class="back" onclick="show('home')">&#8592; Home</button>
 <div class="card"><h2>&#128176; Subscriptions</h2><div id="subStatus"><p class="sub">Loading...</p></div></div>
 <div class="card">
-<h3>1. Choose your exam types</h3>
-<div class="grid" id="subExams"></div>
-<h3 style="margin-top:14px">2. Choose how long</h3>
-<div class="grid" id="subPeriods"></div>
+<h3>Choose your plan</h3>
+<div class="grid" id="subPlans"></div>
+<p class="sub" style="margin:10px 0 0">Every plan unlocks <b>everything</b>: all JAMB, WAEC and NECO questions (12 subjects), the Mini Mock, Post-UTME practice and every video class.</p>
 <div class="subprice" id="subPrice"></div>
 <button class="btn gold" id="subGo" onclick="subCreate()">Make Payment</button>
 </div>
@@ -450,6 +453,29 @@ body{padding-bottom:64px}
 
 
 
+<div id="s-privacy" class="hidden" style="position:fixed;inset:0;z-index:998;overflow:auto;background:var(--cream)">
+<button class="back" onclick="closePrivacy()">&#8592; Back</button>
+<div class="card">
+<h2>Terms &amp; Privacy Policy</h2>
+<p class="sub">Prime Scholars LT &middot; operated by Samuel Amos, Prime Scholars Learning Technologies. Contact: successeverydayww@gmail.com &middot; +234 913 235 2500</p>
+<h3>1. What we collect</h3>
+<p class="sub">Your name, email address, class and class arm to create your account. Optional: age range, gender, phone, guardian phone, target exam, subjects, a short bio and a profile photo. And how you heard about the app (your school or partner).</p>
+<h3>2. Your password</h3>
+<p class="sub">Stored only as a salted SHA-256 hash. We never see or store your plain password. Verification codes expire after 10 minutes.</p>
+<h3>3. How we use it</h3>
+<p class="sub">To manage your account, email you sign-in codes, and show your progress, streaks and results inside the app. Administrators see only anonymous, aggregate numbers. We never sell, rent or trade your information. No advertising, no third-party trackers.</p>
+<h3>4. Students under 18</h3>
+<p class="sub">Your parent or guardian must approve your use of this app, including giving their phone number as guardian contact during sign-up. Guardians may ask us at any time to see, correct or delete your information.</p>
+<h3>5. Payments</h3>
+<p class="sub">Subscription payments are verified by bank transfer screenshot and activated by an administrator. We keep only a record of whether your subscription is active and when it expires.</p>
+<h3>6. Your control</h3>
+<p class="sub">You can delete your account and all your data at any time from Profile &rarr; Danger Zone. Sign-in sessions expire after 30 days.</p>
+<h3>7. Honest note</h3>
+<p class="sub">Practice questions here are original material written in JAMB, WAEC and NECO style. This app is not affiliated with JAMB, WAEC or NECO.</p>
+<button class="btn gold" onclick="closePrivacy()">I understand</button>
+</div>
+</div>
+
 <div class="chat" id="chatWrap"><div class="cbox">
 <div class="chead"><b>&#9788; Prime Scholars Agent</b><button class="cx" onclick="closeChat()">&#10005;</button></div>
 <div class="clog" id="clog"><div class="msg bot">Hello! I am the Prime Scholars Agent. Ask me about any of your 12 subjects by typing or tapping the mic. I answer from this app's question bank and notes.</div></div>
@@ -495,6 +521,7 @@ function openTutors(sid){if(!hasSub('any')){gateGo('any','video classes');return
 }
 function toastSoon(n){alert(n+' tutors are coming soon. Mathematics and Physics are live now.')}
 function playTopic(id){
+ if(!gateGo('any','the full video classes'))return;
  var t=TUTORS.topics.find(function(x){return x.id===id});
  document.getElementById('plTitle').textContent=t.topic;
  document.getElementById('plMeta').textContent=t.title+' — '+t.ch+' ('+t.dur+' full class)';
@@ -572,23 +599,26 @@ api({act:'resetcode',email:em}).then(function(x){
  $('demoCode').innerHTML='<b style="font-size:.9em">Sent to your email \u2709</b>';$('vCode').value='';$('vErr').textContent='';show('verify')})
 .catch(function(){e.textContent='Network problem. Try again.'})}
 /* first-time signup: email code */
-function sendCode(){var n=$('lName').value.trim(),c=$('lContact').value.trim().toLowerCase(),k=$('lClass').value,ar=$('lArm').value,e=$('lErr');
+function sendCode(){var n=$('lName').value.trim(),c=$('lContact').value.trim().toLowerCase(),k=$('lClass').value,ar=$('lArm').value,e=$('lErr'),h=$('lHeard').value,pw=$('lPass').value,ag=$('lAgree').checked;
 if(n.length<3){e.textContent='Enter your full name.';return}
 if(!/^\S+@\S+\.\S+$/.test(c)){e.textContent='Enter your email address (the one you use for JAMB).';return}
 if(!k){e.textContent='Select your class.';return}
 if(!ar){e.textContent='Select your class arm.';return}
+if(!h){e.textContent='Please select how you heard about the app.';return}
+if(pw.length<6){e.textContent='Create a password with at least 6 characters.';return}
+if(!ag){e.textContent='Please tick the box to accept the Terms and Privacy Policy.';return}
 try{localStorage.setItem('sunshine_last_email',c)}catch(x){}
 e.textContent='';resetMode=false;$('btnSend').textContent='Sending code...';
-api({act:'otp',email:c,name:n,cls:k,arm:ar}).then(function(x){
+api({act:'otp',email:c,name:n,cls:k,arm:ar,heard:h,accepted:1}).then(function(x){
  $('btnSend').textContent='Send Verification Code';
  if(!x.ok){e.textContent=x.j.err||'Could not send the code. Check and try again.';return}
- pend={name:n,contact:c,cls:k,arm:ar,mode:'live',exp:Date.now()+600000};try{localStorage.setItem('sunshine_pend',JSON.stringify(pend))}catch(x){}
+ pend={name:n,contact:c,cls:k,arm:ar,heard:h,pass:pw,mode:'live',exp:Date.now()+600000};try{localStorage.setItem('sunshine_pend',JSON.stringify(pend))}catch(x){}
  $('vSub').textContent='A 6-digit code was sent to your email inbox. It expires in 10 minutes. Check spam if you don\u2019t see it.';
  $('demoCode').innerHTML='<b style="font-size:.9em">Sent to your email \u2709</b>';
  $('vCode').value='';$('vErr').textContent='';show('verify')})
 .catch(function(){$('btnSend').textContent='Send Verification Code';
  var code=String(Math.floor(100000+Math.random()*900000));
- pend={name:n,contact:c,cls:k,arm:ar,code:code,exp:Date.now()+10*60000,mode:'sample'};try{localStorage.setItem('sunshine_pend',JSON.stringify(pend))}catch(x){}
+ pend={name:n,contact:c,cls:k,arm:ar,heard:h,pass:pw,code:code,exp:Date.now()+10*60000,mode:'sample'};try{localStorage.setItem('sunshine_pend',JSON.stringify(pend))}catch(x){}
  $('vSub').textContent='You are offline. Sample mode: use the code below.';
  $('demoCode').innerHTML='OFFLINE SAMPLE MODE: in the live app this code arrives in your email inbox. Your sample code is:<b>'+code+'</b>';
  $('vCode').value='';$('vErr').textContent='';show('verify')})}
@@ -597,11 +627,11 @@ if(!pend){show('login');return}
 if(pend.mode==='sample'){
  if(Date.now()>pend.exp){e.textContent='Code expired. Request a new one.';return}
  if(v!==pend.code){e.textContent='Wrong code. Try again.';return}
- TOKEN='';try{localStorage.removeItem('sunshine_pend')}catch(x){}{}setUser({name:pend.name,email:pend.contact,cls:pend.cls,arm:pend.arm,photo:'',age_range:'',gender:'',phone:'',guardian_phone:'',target_exam:'JAMB',subjects:'',bio:'',has_password:true});pend=null;enter();return}
+ TOKEN='';try{localStorage.removeItem('sunshine_pend')}catch(x){}{}setUser({name:pend.name,email:pend.contact,cls:pend.cls,arm:pend.arm,heard_from:pend.heard||'',photo:'',age_range:'',gender:'',phone:'',guardian_phone:'',target_exam:'JAMB',subjects:'',bio:'',has_password:true});pend=null;enter();return}
 api({act:'verify',email:pend.contact,code:v}).then(function(x){
  if(!x.ok){e.textContent=x.j.err||'Wrong code. Try again.';return}
- TOKEN=x.j.token;setUser(x.j.profile);pend=null;try{localStorage.removeItem('sunshine_pend')}catch(x){}
- if(x.j.needs_password||resetMode){$('pw1').value='';$('pw2').value='';$('pwErr').textContent='';show('setpw')}else{enter()}})
+ TOKEN=x.j.token;setUser(x.j.profile);var np=(pend&&pend.pass)?pend.pass:'';pend=null;try{localStorage.removeItem('sunshine_pend')}catch(x){}
+ if(resetMode){$('pw1').value='';$('pw2').value='';$('pwErr').textContent='';show('setpw')}else if(x.j.needs_password&&!np){$('pw1').value='';$('pw2').value='';$('pwErr').textContent='';show('setpw')}else{if(np){try{api({act:'setpw',token:TOKEN,newPassword:np}).catch(function(){})}catch(er){}}enter()}})
 .catch(function(){e.textContent='Network problem. Check your connection and try again.'})}
 function savePwFirst(){var a=$('pw1').value,b=$('pw2').value,e=$('pwErr');
 if(a.length<6){e.textContent='Use at least 6 characters.';return}
@@ -611,7 +641,7 @@ api({act:resetMode?'resetpw':'setpw',token:TOKEN,newPassword:a}).then(function(x
  resetMode=false;P.has_password=true;saveSess();enter()})
 .catch(function(){e.textContent='Network problem. Try again.'})}
 /* home + profile */
-function enter(){try{loadSubs()}catch(x){}
+function enter(){try{loadSubs().then(function(){try{paintTrial()}catch(er){}})}catch(x){}
 try{loadBank()}catch(x){}if(!P){show('login');return}
 paintAvatar($('miniAv'),P);$('whoTxt').textContent=P.name+' \u00b7 '+P.cls+(P.arm?' '+P.arm:'');show('home')}
 function openProfile(){if(!P){show('login');return}
@@ -659,9 +689,11 @@ function logout(){U=null;P=null;TOKEN='';pend=null;try{localStorage.removeItem('
 function renderSubj(){var g='';BANK.subjects.forEach(function(s){g+='<div class="subj" onclick="pickSubj(\''+s.id+'\')"><div class="ic">'+s.icon+'</div><b>'+s.name+'</b><small>'+s.group+' &middot; '+s.qs.length+' questions</small></div>'});document.getElementById('subjGrid').innerHTML=g}
 function pickSubj(id){picks.subj=id;var s=BANK.subjects.find(function(x){return x.id===id});
 document.getElementById('countTitle').textContent=EXAM+' \u00b7 '+s.name;
-var opts=(id==='eng')?[15,30,60]:[15,30,45],max=s.qs.length,r='';
+var free=isFree();var opts=free?[15]:((id==='eng')?[15,30,60]:[15,30,45]),max=s.qs.length,r='';
 opts.forEach(function(n,i){var ok=(i===0)||max>=n;r+='<div class="cbtn'+(i===0?' on':'')+(ok?'':' off')+'" data-n="'+n+'" '+(ok?'onclick="pickCount(this)"':'')+'><b>'+n+'</b><small>'+(ok?'questions':'full bank')+'</small></div>'});
-document.getElementById('countRow').innerHTML=r;picks.count=15;document.getElementById('modeTitle').textContent=EXAM+' \u00b7 '+s.name;show('mode')}
+document.getElementById('countRow').innerHTML=r;picks.count=15;
+ document.getElementById('countNote').textContent=free?'Free trial: 15 hard questions, 2 sessions per day, same set daily. Subscribe to unlock the full bank and all counts.':"More questions unlock as the school's full question bank is loaded.";
+ document.getElementById('modeTitle').textContent=EXAM+' \u00b7 '+s.name;show('mode')}
 function pickCount(el){if(el.classList.contains('off'))return;document.querySelectorAll('.cbtn').forEach(function(b){b.classList.remove('on')});el.classList.add('on');picks.count=+el.dataset.n}
 /* ---- timed test ---- */
 var EXAM='JAMB';
@@ -732,7 +764,7 @@ document.getElementById('countRow').innerHTML=r;picks.count=15;show('mode')}
 /* ---- SUBSCRIPTIONS (v14) ---- */
 var PAYAPI='https://superagent-ccb075d2.base44.app/functions/sunshinePay';
 var PAY_CFG={bank:'Rubies MFB',name:'Success Friday',num:'8881724009'};
-var SUBS=null,SUBROLE='student',SUB={exams:{jamb:false,waec:false,neco:false,utme:false},period:'monthly',txn:null};
+var SUBS=null,SUBROLE='student',SUB={plan:'quarterly',txn:null};
 function payPrice(exams,period){var n=exams.length;if(!n)return 0;var b=n===1?1500:n*1500-500;var m=period==='quarterly'?3:period==='yearly'?12:1;return b*m}
 function naira(n){return 'N'+n.toLocaleString('en-NG')}
 function loadSubs(){if(!TOKEN){SUBS={};return Promise.resolve(null)}
@@ -745,29 +777,39 @@ function hasSub(ex){if(!P)return false;if(isBoss())return true;
 function gateGo(ex,label){if(hasSub(ex))return true;
  alert('Subscribe to unlock '+label+'.\n\nTap Subscriptions below, pay once, and practise till your plan expires.');
  openSubs();return false}
+function isFree(){if(!P)return false;return !hasSub('any')}
+function freeKey(){var d=new Date();return 'sun_free_'+d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function freeToday(){try{return parseInt(localStorage.getItem(freeKey())||'0')}catch(e){return 0}}
+function freeBump(){try{localStorage.setItem(freeKey(),String(freeToday()+1))}catch(e){}}
+function freeLeft(){return Math.max(0,2-freeToday())}
+function hsh(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0}return h}
+function freePick(s,n){var hard=s.qs.filter(function(q){return (q.d||1)>=4});
+ if(hard.length<n)hard=s.qs.filter(function(q){return (q.d||1)>=3});
+ hard.sort(function(a,b){return hsh(picks.subj+'|'+a.q)-hsh(picks.subj+'|'+b.q)});
+ return shuf(hard.slice(0,n))}
+function paintTrial(){var el=document.getElementById('trialNote');if(!el)return;
+ if(isFree()){el.style.display='block';el.innerHTML='Free trial: 15 hard questions per session, 2 sessions per day, same set daily. <b>Subscribe</b> to unlock everything.'}
+ else el.style.display='none'}
+function openPrivacy(){show('privacy')}
+function closePrivacy(){show('login')}
 function openSubs(){show('subs');$('subStatus').innerHTML='<p class="sub">Loading...</p>';
  loadSubs().then(function(){subRender()});subTxns()}
 function subRender(){
- var names={jamb:'JAMB',waec:'WAEC',neco:'NECO',utme:'Post-UTME'};
+ var names={jamb:'JAMB',waec:'WAEC',neco:'NECO',utme:'Post-UTME',all:'Full access'};
  var st='';
  if(isBoss()){st='<p class="sub">You are an admin: full access, no subscription needed.</p>'}
  if(SUBS&&Object.keys(SUBS).length){st+='<p class="sub" style="color:#f5c518;font-weight:700">ACTIVE</p>';
-  Object.keys(SUBS).forEach(function(k){st+='<div class="txnline"><b>'+names[k]+'</b> till '+String(SUBS[k]).slice(0,10)+' (all videos included)</div>'})}
- if(!isBoss()&&!Object.keys(SUBS||{}).length){st='<p class="sub">No active subscription. Subscribe below: 1,500 per exam type per month, discounts for bundles, videos included.</p>'}
+  Object.keys(SUBS).forEach(function(k){st+='<div class="txnline"><b>'+(names[k]||k)+'</b> till '+String(SUBS[k]).slice(0,10)+' (all exams and videos included)</div>'})}
+ if(!isBoss()&&!Object.keys(SUBS||{}).length){st+='<p class="sub">No active subscription. Subscribe below: \u20a62,000 for 3 months, or \u20a68,000 for a full year. Every plan unlocks everything.</p>'}
  $('subStatus').innerHTML=st;
- $('subExams').innerHTML=Object.keys(names).map(function(k){return '<div class="exam '+(SUB.exams[k]?'on':'off')+'" onclick="subToggle(\''+k+'\')"><b>'+names[k]+'</b><small>'+(SUB.exams[k]?'selected':'tap to add')+'</small></div>'}).join('');
- var ps=[['monthly','1 month'],['quarterly','3 months'],['yearly','12 months']];
- $('subPeriods').innerHTML=ps.map(function(p){return '<div class="exam '+(SUB.period===p[0]?'on':'off')+'" onclick="subPeriod(\''+p[0]+'\')"><b>'+p[1]+'</b><small>'+(SUB.period===p[0]?'selected':'tap')+'</small></div>'}).join('');
- var sel=Object.keys(SUB.exams).filter(function(k){return SUB.exams[k]});
- var pr=payPrice(sel,SUB.period);
- $('subPrice').innerHTML=pr?(naira(pr)+'<small>'+(sel.length>1?'bundle discount applied':'')+' videos for all 12 subjects included</small>'):'<small>Choose at least one exam type</small>';
- $('subGo').style.opacity=pr?1:0.5}
-function subToggle(k){SUB.exams[k]=!SUB.exams[k];SUB.txn=null;$('payBox').style.display='none';subRender()}
-function subPeriod(p){SUB.period=p;SUB.txn=null;$('payBox').style.display='none';subRender()}
-function subCreate(){var sel=Object.keys(SUB.exams).filter(function(k){return SUB.exams[k]});
- if(!sel.length){alert('Choose at least one exam type first.');return}
+ var PL=[['quarterly','3 Months','2,000'],['yearly','12 Months','8,000']];
+ $('subPlans').innerHTML=PL.map(function(p){return '<div class="exam '+(SUB.plan===p[0]?'on':'off')+'" onclick="subPlan(\''+p[0]+'\')"><b>'+p[1]+'</b><small>\u20a6'+p[2]+'</small></div>'}).join('');
+ $('subPrice').innerHTML='<b style="font-size:20px">\u20a6'+(SUB.plan==='yearly'?'8,000':'2,000')+'</b><small>'+(SUB.plan==='yearly'?'a full year':'3 months')+' \u00b7 everything unlocked</small>';
+ $('subGo').style.opacity=1}
+function subPlan(p){SUB.plan=p;SUB.txn=null;$('payBox').style.display='none';subRender()}
+function subCreate(){
  $('subGo').textContent='Creating...';
- fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'newtxn',token:TOKEN,exams:sel,period:SUB.period})}).then(function(r){return r.json()}).then(function(j){
+ fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'newtxn',token:TOKEN,plan:SUB.plan})}).then(function(r){return r.json()}).then(function(j){
   $('subGo').textContent='Make Payment';
   if(j.err){alert(j.err);return}
   SUB.txn=j;
@@ -864,14 +906,16 @@ function noteSeen(){try{
  localStorage.setItem('sun_seen',JSON.stringify(seen))}catch(e){}}
 function seenCount(sid){try{var seen=JSON.parse(localStorage.getItem('sun_seen')||'{}');return Object.keys(seen[sid]||{}).length}catch(e){return 0}}
 
-function pickExam(e){EXAM=e;var k=e.toLowerCase();if(!gateGo(k,e))return;loadSubs();show('subj')}
+function pickExam(e){EXAM=e;loadSubs();show('subj')}
 var MODE='cbt';
 function setMode(m){MODE=m;show('count');
 document.getElementById('countSub').textContent=(m==='practice')?'Question Practice: choose how many questions. Every answer shows a full breakdown straight away, with the Prime Scholars Agent on hand.':'CBT Test: choose how many questions. Exam condition, 30 seconds per question. Full breakdown of every answer at the end.';
 document.getElementById('startBtn').textContent=(m==='practice')?'Start Practice':'Start Timed CBT Test'}
 function startTest(){if(!bankGuard(startTest))return;var s;if(picks.subj==='multi'&&picks.multi){var qs=[];picks.multi.forEach(function(id){var x=BANK.subjects.find(function(y){return y.id===id});if(x)qs=qs.concat(x.qs)});s={name:picks.course||'Post-UTME',qs:qs}}else s=BANK.subjects.find(function(x){return x.id===picks.subj});
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
-var pool=rampPick(EXAM==='Post-UTME'?utmeHard(s.qs):s.qs,Math.min(picks.count,s.qs.length),tKey());
+var pool;
+if(isFree()&&picks.subj!=='multi'){if(freeLeft()<=0){alert('You have used your 2 free sessions for today. Subscribe to keep practising with thousands of questions!');openSubs();return}pool=freePick(s,picks.count);freeBump()}
+else pool=rampPick(EXAM==='Post-UTME'?utmeHard(s.qs):s.qs,Math.min(picks.count,s.qs.length),tKey());
 picks.order=pool;picks.idx=0;picks.chosen=new Array(picks.order.length).fill(-1);
 noteSeen();picks.t0=Date.now();show('quiz');renderQ();
 document.getElementById('timer').style.display=(MODE==='cbt'||MODE==='mock')?'block':'none';
@@ -1067,8 +1111,13 @@ function openProgressTopics(sid){
   rows+='<div class="tprow"><span><b>'+tp+'</b> &middot; '+a[0]+'/'+a[1]+' ('+p+'%)</span><span style="display:flex;align-items:center;gap:6px"><span class="pbar" style="width:110px"><span class="pfill '+(p>=70?'strong':p>=50?'mid':'weak')+'" style="display:block;width:'+p+'%"></span></span>'+(vid?'<button class="play" style="background:none;border:none;cursor:pointer;font-size:1.1rem" onclick="playTopic(\''+vid+'\')">&#9654;</button>':'')+'</span></div>'});
  document.getElementById('progTopicRows').innerHTML=rows||'<p class="sub">No topics recorded yet.</p>'}
 /* ---- Prime Scholars Agent ---- */
-function openChat(){document.getElementById('chatWrap').classList.add('open')}
-function closeChat(){document.getElementById('chatWrap').classList.remove('open');AGQ=null}
+var chatNudged=false;
+function openChat(){document.getElementById('chatWrap').classList.add('open');
+ if(!chatNudged){chatNudged=true;
+  if(isFree()){var d=document.createElement('div');d.className='msg bot';
+   d.innerHTML='You are on the <b>free trial</b>: 15 hard questions per session, 2 sessions a day. The Mini Mock, Post-UTME and video classes are locked. <b>Subscribe</b> to unlock everything \u2014 \u20a62,000 for 3 months or \u20a68,000 for a full year.<br><br><button class="btn gold" style="margin-top:6px" onclick="openSubs()">Subscribe now</button>';
+   document.getElementById('clog').appendChild(d);document.getElementById('clog').scrollTop=1e9}}}
+function closeChat(){document.getElementById('chatWrap').classList.remove('open');AGQ=null;chatNudged=false}
 function addMsg(t,w){var d=document.createElement('div');d.className='msg '+w;d.textContent=t;var l=document.getElementById('clog');l.appendChild(d);l.scrollTop=1e9}
 var rec=null;
 function voiceAsk(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){addMsg('Voice needs Chrome. Please type your question.','bot');return}
