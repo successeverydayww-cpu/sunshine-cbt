@@ -334,7 +334,7 @@ body{padding-bottom:64px}
 <div class="exam" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v14.1</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Sunshine Agent to help you. Works offline once loaded. <b>v15</b></p>
 <p style="text-align:center;color:#f7d774;font-weight:700;margin:10px 0;font-size:.85rem">Sample built by Samuel Amos &middot; JAMB, WAEC &amp; NECO style CBT questions</p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -603,7 +603,8 @@ api({act:resetMode?'resetpw':'setpw',token:TOKEN,newPassword:a}).then(function(x
  resetMode=false;P.has_password=true;saveSess();enter()})
 .catch(function(){e.textContent='Network problem. Try again.'})}
 /* home + profile */
-function enter(){try{loadSubs()}catch(x){}if(!P){show('login');return}
+function enter(){try{loadSubs()}catch(x){}
+try{loadBank()}catch(x){}if(!P){show('login');return}
 paintAvatar($('miniAv'),P);$('whoTxt').textContent=P.name+' \u00b7 '+P.cls+(P.arm?' '+P.arm:'');show('home')}
 function openProfile(){if(!P){show('login');return}
 $('adminBtnZone').style.display=(P&&(P.role==='admin'||P.role==='owner'))?'block':'none';
@@ -701,9 +702,10 @@ document.getElementById('crsRec').classList.remove('hidden');
 document.getElementById('crsRec').innerHTML='<div class="recbox"><h3>'+c+'</h3><p class="sub">JAMB subject combination:</p><div class="chips" id="recChips">'+ids.map(function(id){var s=subjById(id);return '<div class="chip rec" onclick="utmeGo([\''+id+'\'])">'+(s?s.name:id)+'</div>'}).join('')+'</div><p class="sub" style="margin:8px 0">Tap a subject to practise it alone, or use the button to practise all four mixed, just like the real Post-UTME.</p><button class="btn gold" onclick="utmeGo(0)" style="width:100%">Practise All 4 Subjects</button><p class="sub" style="margin:10px 0 4px">Or sit the full school format:</p><button class="btn gold" onclick="utmeMock()" style="width:100%">School Post-UTME Mock &middot; 60q &middot; 30 min</button></div>';
 document.getElementById('crsRec').scrollIntoView({behavior:'smooth'})}
 
-function utmeMock(){var ids=recSubs(UTME.course);var pool=[];
+function utmeMock(){if(!bankGuard(utmeMock))return;var ids=recSubs(UTME.course);var pool=[];
  ids.forEach(function(id){var s=subjById(id);if(s)pool=pool.concat(rampPick(s.qs,Math.min(15,s.qs.length),'SMOCK|'+UTME.course+'|'+id))});
  pool.sort(function(a,b){return (a.d||1)-(b.d||1)});
+ noteSeen();
  MODE='mock';picks.order=pool;picks.idx=0;picks.chosen=new Array(pool.length).fill(-1);
  picks.t0=Date.now();picks.deadline=Date.now()+60*30*1000;EXAM='Post-UTME';picks.course=UTME.course;
  clearInterval(picks.timerId);picks.timerId=setInterval(tick,250);show('quiz');renderQ();tick()}
@@ -811,16 +813,45 @@ function adPayAct(txn,act){if(act==='reject'&&!confirm('Reject transaction '+txn
   alert(j.err||((act==='activate')?'Activated. The student now has access and gets an email.':'Rejected.'));
   adPayLoad()}).catch(function(){alert('Network error.')})}
 
+
+/* ---- EXTERNAL JAMB BANK (v15) ---- */
+var BANK_URL='https://successeverydayww-cpu.github.io/sunshine-cbt/bank_jamb.json';
+var bankLoaded=false,bankTried=false,bankPromise=null;
+function mergeBank(j){(j&&j.subjects||[]).forEach(function(sx){
+ var t=BANK.subjects.filter(function(y){return y.id===sx.id})[0];
+ if(t){(sx.qs||[]).forEach(function(q){q.s=t.name;t.qs.push(q)})}
+ else if(sx.qs&&sx.qs.length){BANK.subjects.push(sx)}})}
+function loadBank(){if(bankLoaded)return Promise.resolve(true);
+ if(bankPromise)return bankPromise;
+ bankPromise=fetch(BANK_URL+'?cb='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()})
+ .then(function(j){mergeBank(j);bankLoaded=true;
+  try{if(window.caches){caches.open('sunshine-bank-v1').then(function(c){return c.put(BANK_URL,new Response(JSON.stringify(j),{headers:{'Content-Type':'application/json'}}))})}}catch(x){}
+  return true})
+ .catch(function(){
+  try{if(window.caches){return caches.open('sunshine-bank-v1').then(function(c){return c.match(BANK_URL)}).then(function(m){if(!m)throw 0;return m.json()}).then(function(j){mergeBank(j);bankLoaded=true;return true})}}catch(x){}
+  return false});
+ return bankPromise}
+function bankGuard(cb){if(bankLoaded||bankTried||!(navigator.onLine)){bankTried=true;return true}
+ bankTried=true;
+ loadBank().then(function(){cb()});return false}
+function noteSeen(){try{
+ var seen=JSON.parse(localStorage.getItem('sun_seen')||'{}');
+ picks.order.forEach(function(q){if(!q||!q.s)return;
+  var sb=BANK.subjects.filter(function(x){return x.name===q.s})[0];
+  var k=sb?sb.id:q.s;seen[k]=seen[k]||{};seen[k][String(q.q||'').slice(0,90)]=1});
+ localStorage.setItem('sun_seen',JSON.stringify(seen))}catch(e){}}
+function seenCount(sid){try{var seen=JSON.parse(localStorage.getItem('sun_seen')||'{}');return Object.keys(seen[sid]||{}).length}catch(e){return 0}}
+
 function pickExam(e){EXAM=e;var k=e.toLowerCase();if(!gateGo(k,e))return;loadSubs();show('subj')}
 var MODE='cbt';
 function setMode(m){MODE=m;show('count');
 document.getElementById('countSub').textContent=(m==='practice')?'Question Practice: choose how many questions. Every answer shows a full breakdown straight away, with the Sunshine Agent on hand.':'CBT Test: choose how many questions. Exam condition, 30 seconds per question. Full breakdown of every answer at the end.';
 document.getElementById('startBtn').textContent=(m==='practice')?'Start Practice':'Start Timed CBT Test'}
-function startTest(){var s;if(picks.subj==='multi'&&picks.multi){var qs=[];picks.multi.forEach(function(id){var x=BANK.subjects.find(function(y){return y.id===id});if(x)qs=qs.concat(x.qs)});s={name:picks.course||'Post-UTME',qs:qs}}else s=BANK.subjects.find(function(x){return x.id===picks.subj});
+function startTest(){if(!bankGuard(startTest))return;var s;if(picks.subj==='multi'&&picks.multi){var qs=[];picks.multi.forEach(function(id){var x=BANK.subjects.find(function(y){return y.id===id});if(x)qs=qs.concat(x.qs)});s={name:picks.course||'Post-UTME',qs:qs}}else s=BANK.subjects.find(function(x){return x.id===picks.subj});
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
 var pool=rampPick(s.qs,Math.min(picks.count,s.qs.length),tKey());
 picks.order=pool;picks.idx=0;picks.chosen=new Array(picks.order.length).fill(-1);
-picks.t0=Date.now();show('quiz');renderQ();
+noteSeen();picks.t0=Date.now();show('quiz');renderQ();
 document.getElementById('timer').style.display=(MODE==='cbt'||MODE==='mock')?'block':'none';
 clearInterval(picks.timerId);
 if(MODE==='cbt'){picks.qEnd=Date.now()+30000;picks.timerId=setInterval(tick,250);tick()}}
@@ -828,17 +859,18 @@ if(MODE==='cbt'){picks.qEnd=Date.now()+30000;picks.timerId=setInterval(tick,250)
 function bumpTrial(key){var t={};try{t=JSON.parse(localStorage.getItem('sun_tries')||'{}')}catch(e){}
  t[key]=(t[key]||0)+1;try{localStorage.setItem('sun_tries',JSON.stringify(t))}catch(x){}
  return t[key]}
-function diffMix(n){var m=[[0.7,0.3,0],[0.5,0.45,0.05],[0.35,0.45,0.2],[0.2,0.45,0.35],[0.1,0.4,0.5],[0.05,0.35,0.6]];
+function diffMix(n){var m=[[0.6,0.3,0.1,0,0],[0.4,0.35,0.15,0.08,0.02],[0.25,0.3,0.25,0.15,0.05],[0.15,0.25,0.3,0.2,0.1],[0.08,0.17,0.28,0.27,0.2],[0.05,0.1,0.25,0.3,0.3]];
  return m[Math.min(Math.max(n,1)-1,m.length-1)]}
 function tKey(){return EXAM+'|'+(picks.subj==='multi'?(picks.multi||[]).join('+'):picks.subj)}
 function rampPick(qs,n,key){var trial=bumpTrial(key||tKey());
  var p=diffMix(trial);
- var lv={1:[],2:[],3:[]};qs.forEach(function(q){(lv[q.d]||lv[1]).push(q)});
- [1,2,3].forEach(function(k){shuf(lv[k])});
- var w1=Math.round(p[0]*n),w2=Math.round(p[1]*n),w3=Math.max(0,n-w1-w2);
- var take=[],caps={1:Math.min(w1,lv[1].length),2:Math.min(w2,lv[2].length),3:Math.min(w3,lv[3].length)};
- [1,2,3].forEach(function(k){take=take.concat(lv[k].slice(0,caps[k]))});
- var rest=lv[1].slice(caps[1]).concat(lv[2].slice(caps[2])).concat(lv[3].slice(caps[3]));
+ var lv={1:[],2:[],3:[],4:[],5:[]};qs.forEach(function(q){var dd=q.d?Math.max(1,Math.min(5,q.d|0)):1;lv[dd].push(q)});
+ [1,2,3,4,5].forEach(function(k){shuf(lv[k])});
+ var w={},take=[],caps={};
+ [1,2,3,4].forEach(function(k){w[k]=Math.round(p[k-1]*n)});
+ w[5]=Math.max(0,n-(w[1]+w[2]+w[3]+w[4]));
+ [1,2,3,4,5].forEach(function(k){caps[k]=Math.min(w[k],lv[k].length);take=take.concat(lv[k].slice(0,caps[k]))});
+ var rest=[];[1,2,3,4,5].forEach(function(k){rest=rest.concat(lv[k].slice(caps[k]))});
  shuf(rest);rest.sort(function(a,b){return (b.d||1)-(a.d||1)});take=take.concat(rest.slice(0,Math.max(0,n-take.length)));
  take.sort(function(a,b){return (a.d||1)-(b.d||1)});
  return take.slice(0,n)}
@@ -965,12 +997,13 @@ function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i
 function tryStartMock(){
  if(MOCKSUBS.length<3){alert('Pick '+(3-MOCKSUBS.length)+' more subject'+((3-MOCKSUBS.length)>1?'s':'')+' first, then start. English is already included.');return}
  startMock()}
-function startMock(){
+function startMock(){if(!bankGuard(startMock))return;
  var eng=BANK.subjects.filter(function(s){return s.id==='eng'})[0];
  var pool=rampPick(eng.qs,15,'MOCK|eng');
  MOCKSUBS.forEach(function(id){var s=BANK.subjects.filter(function(x){return x.id===id})[0];
   pool=pool.concat(rampPick(s.qs,15,'MOCK|'+id))});
  pool.sort(function(a,b){return (a.d||1)-(b.d||1)});
+ noteSeen();
  MODE='mock';picks.order=pool;picks.idx=0;picks.chosen=new Array(pool.length).fill(-1);
  picks.t0=Date.now();picks.deadline=Date.now()+60*30*1000;
  clearInterval(picks.timerId);picks.timerId=setInterval(tick,250);
@@ -984,6 +1017,11 @@ function openProgress(){
  document.getElementById('progSummary').innerHTML=(st.c>0?'<span class="statchip">&#128293; '+st.c+'-day streak (best '+st.b+')</span> ':'')+
   '<span class="statchip">'+tTests+' test'+(tTests===1?'':'s')+' taken</span> <span class="statchip">'+tQ+' questions answered</span> '+
   '<span class="statchip">'+(tQ?Math.round(tOk/tQ*100):0)+'% overall accuracy</span>';
+ try{var seen=JSON.parse(localStorage.getItem('sun_seen')||'{}');var add='';
+ BANK.subjects.forEach(function(s){var n=Object.keys(seen[s.id]||{}).length;if(!n)return;var tot=s.qs.length;
+  if(n>=900||n/tot>=0.9){add+=' <span class="statchip">&#11088; '+s.name+': '+n+' of '+tot+' questions tried - bank nearly exhausted</span>'}
+  else if(n>=100){add+=' <span class="statchip">'+s.icon+' '+s.name+': '+n+' of '+tot+' tried</span>'}});
+ if(add)document.getElementById('progSummary').innerHTML+=add}catch(e){}
  var rows='';
  BANK.subjects.forEach(function(s){
   var mine=all.filter(function(r){return r.s===s.id});
@@ -1092,6 +1130,7 @@ function nav(where){
  clearInterval(picks.timerId);
  if(where==='mock'&&!document.getElementById('s-mock').classList.contains('hidden')){show('mock');return}
  if(where==='mock'){openMock();return}
+ if(where==='progress'){openProgress();return}
  show(where);
 }
 function updNav(s){
