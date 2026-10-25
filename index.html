@@ -571,6 +571,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="sub">Full class-length lessons (30 minutes and above) for every topic, hand-checked. English, Mathematics, Physics, Chemistry and Biology are live. Swipe the row to see all five.</p>
 <div class="examrow" id="tutorSubjs"></div>
 </div>
+<div class="card"><input class="f" id="tutorSearch" placeholder="&#128269; Search a topic e.g. indices, mitosis, gases" oninput="tutorFilter()"></div>
 <div class="card" id="tutorList"></div>
 </div>
 
@@ -791,7 +792,11 @@ setTimeout(function(){try{void document.body.offsetWidth;var _c=document.querySe
 }catch(e){}
 if(s==='subj'){try{document.getElementById('subjTitle').textContent=EXAM+' \u00b7 Choose a subject'}catch(x){}}}
 /* ---- tutors ---- */
+var TUTOR_CUR='math';
+function tutorFilter(){openTutors(TUTOR_CUR)}
 function openTutors(sid){if(!hasSub('any')){gateGo('any','video classes');return}
+ TUTOR_CUR=sid;
+ var qEl=document.getElementById('tutorSearch');var q=(qEl?qEl.value:'').trim().toLowerCase();
  var subj=TUTORS.subjects.find(function(x){return x.id===sid});
  var ss=TUTORS.subjects.filter(function(s){return s.live}).map(function(s){
   var n=TUTORS.topics.filter(function(t){return t.sub===s.id}).length;
@@ -800,14 +805,14 @@ function openTutors(sid){if(!hasSub('any')){gateGo('any','video classes');return
  document.getElementById('tutorSubjs').innerHTML=ss;
  var list='';
  ['SS1','SS2','SS3'].forEach(function(c){
-  var ts=TUTORS.topics.filter(function(t){return t.cls===c&&t.sub===sid});
+  var ts=TUTORS.topics.filter(function(t){return t.cls===c&&t.sub===sid&&(!q||String(t.topic).toLowerCase().indexOf(q)>=0)});
   if(!ts.length)return;
   list+='<h3 style="margin:14px 0 4px;color:var(--g1)">'+c+' '+subj.name+'</h3>';
   ts.forEach(function(t){
    list+='<div class="trow" onclick="playTopic(\''+t.id+'\')"><span><b>'+t.topic+'</b><br><small>'+t.ch+' &middot; '+t.dur+'</small></span><span class="play">&#9654;</span></div>';
   });
  });
- if(!list)list='<p class="sub">Select a subject.</p>';
+ if(!list)list='<p class="sub">'+(q?'No lessons matching "'+q.replace(/</g,'&lt;')+'" in '+subj.name+'. Try another word, e.g. a single keyword like "indices" or "gases".':'Select a subject.')+'</p>';
  document.getElementById('tutorList').innerHTML=list;
  show('tutors');
 }
