@@ -135,6 +135,14 @@ select.f{background:#fff}
 .tprow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eee8dd}
 .tprow:last-child{border-bottom:none}
 .statchip{display:inline-block;background:rgba(255,255,255,.75);border:1px solid #d8d2c2;border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:600;color:#5a5443}
+.wmWrap{position:relative}
+.wmenuBtn{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold);background:rgba(255,255,255,.12);color:#fff;font-size:1.15rem;line-height:1;cursor:pointer;font-weight:700;padding:0}
+.wmenu{position:absolute;right:0;top:40px;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(3,18,9,.35);min-width:210px;z-index:80;padding:6px}
+.wmenu div{padding:11px 14px;font-size:.85rem;font-weight:600;color:#123524;cursor:pointer;border-radius:9px}
+.wmenu div:active{background:#eef6f0}
+.qWho{position:fixed;top:8px;left:12px;z-index:55;display:flex;align-items:center;max-width:44vw}
+.qWho .mini{margin-right:6px}
+.qName{color:#fff;font-size:.75rem;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mockgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
 .mockgrid .exam{padding:10px 6px;cursor:pointer;min-width:0}
 .mockgrid .exam b{font-size:.8rem;line-height:1.15}
@@ -565,7 +573,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 
 <div id="s-home" class="hidden">
 <div class="heroBand" id="heroBand"><div class="hbKick" id="hbKick">Prime Scholars</div><div class="hbHi" id="hbHi"></div><div class="hbDate" id="hbDate"></div><div class="hbChips" id="hbChips"></div></div>
-<div class="who"><span><span class="mini" id="miniAv" onclick="openProfile()">&#128100;</span><span id="whoTxt"></span></span><span><span class="statchip" id="streakChip"></span></span><span><button onclick="openProfile()">My profile</button></span></div>
+<div class="who"><span><span class="mini" id="miniAv" onclick="openProfile()">&#128100;</span><span id="whoTxt"></span></span><span><span class="statchip" id="streakChip"></span></span><span class="wmWrap"><button class="wmenuBtn" id="wmBtn" onclick="toggleWM(event)">&#8942;</button><div class="wmenu hidden" id="wMenu"></div></span></div>
 <div class="card">
 <h2>Choose your examination</h2>
 <div class="examrow">
@@ -576,7 +584,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="exam on" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v18.7</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v18.8</b></p>
 <p class="sub" id="trialNote" style="display:none;color:#f7d774;font-weight:700"></p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -653,7 +661,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 </div>
 
 <div id="s-quiz" class="hidden">
-<div id="qdbg" style="display:none;margin:10px 14px 0;color:#ffe27a;background:rgba(140,0,0,.92);font-size:13px;font-weight:700;padding:9px;border-radius:10px;text-align:center;z-index:60">DBG</div><div class="timer" id="timer">00:00</div>
+<div id="qdbg" style="display:none;margin:10px 14px 0;color:#ffe27a;background:rgba(140,0,0,.92);font-size:13px;font-weight:700;padding:9px;border-radius:10px;text-align:center;z-index:60">DBG</div><div class="qWho hidden" id="qWho"></div><div class="timer" id="timer">00:00</div>
 <div style="height:46px"></div>
 <div class="card">
 <div class="qmeta"><span id="qSubj"></span><span><b id="qNum"></b> / <span id="qTot"></span></span></div>
@@ -1081,6 +1089,17 @@ function naira(n){return 'N'+n.toLocaleString('en-NG')}
 function loadSubs(){if(!TOKEN){SUBS={};return Promise.resolve(null)}
  return fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'mysubs',token:TOKEN})}).then(function(r){return r.json()}).then(function(j){SUBS=j.subs||{};SUBROLE=j.role||'student';return j}).catch(function(){SUBS=null;return null})}
 function isBoss(){return P&&(P.role==='admin'||P.role==='owner')}
+var WM_ACTS=[];
+function toggleWM(ev){try{if(ev)ev.stopPropagation()}catch(e){}var m=document.getElementById("wMenu");if(!m)return;
+ if(!m.classList.contains("hidden")){m.classList.add("hidden");return}
+ var items=[['&#128100; My profile',function(){openProfile()}],['&#128200; My progress',function(){openProgress()}],['&#128176; Subscriptions',function(){openSubs()}],['&#127891; Video tutors',function(){openTutors('math')}]];
+ if(isBoss())items.push(['&#128202; Admin dashboard',function(){openAdmin()}]);
+ items.push(['&#128682; Sign out',function(){logout()}]);
+ WM_ACTS=items.map(function(x){return x[1]});
+ m.innerHTML=items.map(function(x,i){return '<div onclick="wmGo('+i+')">'+x[0]+'</div>'}).join('');
+ m.classList.remove("hidden")}
+function wmGo(i){var m=document.getElementById("wMenu");if(m)m.classList.add("hidden");var a=WM_ACTS[i];WM_ACTS=[];if(a)try{a()}catch(e){}}
+document.addEventListener("click",function(e){try{var m=document.getElementById("wMenu");if(m&&m.classList.contains("hidden")!==true){if(!m.contains(e.target)&&e.target&&e.target.id!=='wmBtn'&&!(e.target.parentNode&&e.target.parentNode.id==='wmBtn'))m.classList.add("hidden")}}catch(x){}})
 function hasSub(ex){if(!P)return false;if(isBoss())return true;
  if(SUBS===null)return true;
  if(ex==='any')return Object.keys(SUBS).length>0;
@@ -1258,7 +1277,7 @@ var MODE='cbt';
 function setMode(m){MODE=m;show('count');
 document.getElementById('countSub').textContent=(m==='practice')?'Question Practice: choose how many questions. Every answer shows a full breakdown straight away, with the Prime Scholars Agent on hand.':'CBT Test: choose how many questions. Exam condition, 30 seconds per question. Full breakdown of every answer at the end.';
 document.getElementById('startBtn').textContent=(m==='practice')?'Start Practice':'Start Timed CBT Test'}
-function startTest(){if(!bankGuard(startTest))return;var s;if(picks.subj==='multi'&&picks.multi){var qs=[];picks.multi.forEach(function(id){var x=BANK.subjects.find(function(y){return y.id===id});if(x)qs=qs.concat(x.qs)});s={name:picks.course||'Post-UTME',qs:qs}}else s=BANK.subjects.find(function(x){return x.id===picks.subj});
+function startTest(){if(!bankGuard(startTest))return;try{var qw=document.getElementById("qWho");if(qw){qw.classList.remove("hidden");var nm=(P&&P.name?P.name.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"):"Student");qw.innerHTML='<span class="mini" id="qAv"></span><span class="qName">'+nm+((P&&P.cls)?' &middot; '+P.cls:'')+'</span>';paintAvatar(document.getElementById("qAv"),P||{})}}catch(e){}var s;if(picks.subj==='multi'&&picks.multi){var qs=[];picks.multi.forEach(function(id){var x=BANK.subjects.find(function(y){return y.id===id});if(x)qs=qs.concat(x.qs)});s={name:picks.course||'Post-UTME',qs:qs}}else s=BANK.subjects.find(function(x){return x.id===picks.subj});
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
 var pool;
 if(isFree()&&picks.subj!=='multi'){if(freeLeft()<=0){alert('You have used your 2 free sessions for today. Subscribe to keep practising with thousands of questions!');openSubs();return}pool=freePick(s,picks.count);freeBump()}
