@@ -1599,7 +1599,7 @@ if(rec){rec.stop();return}rec=new SR();rec.lang='en-NG';rec.interimResults=false
 rec.onresult=function(e){var t=e.results[0][0].transcript;addMsg(t,'usr');answer(t)};rec.onerror=function(){addMsg('I did not catch that. Try again or type it.','bot')};rec.onend=function(){rec=null};rec.start()}
 function sendQ(){var i=document.getElementById('cin');if(!i.value.trim())return;addMsg(i.value,'usr');answer(i.value);i.value=''}
 function norm(t){return t.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ')}
-function speak(t){try{var u=new SpeechSynthesisUtterance(t);u.lang='en-NG';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function speak(t){} /* voice muted per Samuel 25 Oct 2026: agent replies in text only */
 var AGQ=null;
 function askAgent(i){AGQ=picks.order[i];var q=AGQ;openChat();
 var msg='You are asking about this question:\n\n'+q.q+'\n\nCorrect answer: '+String.fromCharCode(65+q.a)+'. '+q.o[q.a]+'\n\n'+q.e+'\n\nYou can ask me: "why is that the answer?", "show me the working", "explain it simply", "what about option '+String.fromCharCode(65+(q.a+1)%4)+'?"';
