@@ -42,7 +42,10 @@ input.f:focus{outline:none;border-color:var(--g2)}
 .examrow{display:flex;gap:10px;margin-top:10px}
 .exam{flex:1;border:2px solid #d4dccf;background:#fff;border-radius:12px;padding:13px 6px;text-align:center}
 .exam.on{border-color:var(--g2);background:linear-gradient(135deg,var(--g2),var(--g1));color:#fff;cursor:pointer}
-.exam.off{opacity:.5}
+.exam.off{opacity:1;background:#fff;border:2px dashed #cfc7b4;color:#4c4636;box-shadow:none}
+.mockgrid .exam.off small{color:#7a7462}
+.mockgrid .exam.on{background:linear-gradient(180deg,#fff8e0,#ffefb8);border:2px solid var(--gold);color:#123524;box-shadow:0 4px 14px rgba(245,183,10,.35)}
+.mockgrid .exam.on small{color:#5a5443}
 .exam b{font-size:1rem;display:block}
 .exam small{font-size:.6rem;letter-spacing:.5px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
@@ -526,7 +529,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 </div>
 <div class="card">
 <h3>Students</h3>
-<div id="adRoster"></div>
+<div style="display:flex;gap:8px;align-items:center;margin:10px 0"><input id="adSearch" type="search" placeholder="Search students by name or email" oninput="adFilter()" style="flex:1;margin:0"><small class="sub" id="adCount" style="white-space:nowrap"></small></div><div id="adRoster"></div>
 </div>
 </div>
 
@@ -575,7 +578,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 
 <div id="s-home" class="hidden">
 <div class="heroBand" id="heroBand"><div class="hbKick" id="hbKick">Prime Scholars</div><div class="hbHi" id="hbHi"></div><div class="hbDate" id="hbDate"></div><div class="hbChips" id="hbChips"></div></div>
-<div class="who"><span id="whoTxt"></span><span><span class="statchip" id="streakChip"></span></span></div>
+
 <div class="card">
 <h2>Choose your examination</h2>
 <div class="examrow">
@@ -586,7 +589,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="exam on" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v18.11</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v18.12</b></p>
 <p class="sub" id="trialNote" style="display:none;color:#f7d774;font-weight:700"></p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn solid" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -827,10 +830,15 @@ function openAdmin(){show('admin');$('adStats').innerHTML='<p class="sub">Loadin
    var tag=r.role==='owner'?' <span class="badge" style="background:#f5b70a">OWNER</span>':' <span class="badge" style="background:#2e8b2e;color:#fff">ADMIN</span>';
    var btn=r.role==='owner'?'':' <button class="btn ghost" style="color:#b00020;border-color:#b00020;padding:4px 10px" onclick="adRevoke(\''+r.email+'\')">Remove admin</button>';
    return '<div class="trow"><span><b>'+r.name+'</b>'+tag+'<br><small>'+r.email+'</small></span><span>'+btn+'</span></div>'}).join('')||'<p class="sub">No admins yet besides you.</p>';
-  $('adRoster').innerHTML=x.j.roster.slice().sort(function(a,b){return (b.streak||0)-(a.streak||0)}).map(function(r){
-   var role=r.role==='student'?'':(r.role==='owner'?' &#128081;':' &#9989;');
-   return '<div class="trow"><span><b>'+r.name+'</b>'+role+'<br><small>'+r.email+' &middot; '+(r.cls||'')+' &middot; '+(r.status||'')+(r.subscribed?' &middot; SUBSCRIBED':'')+'</small></span><span><small>&#128293; '+(r.streak||0)+' day'+((r.streak||0)===1?'':'s')+'<br>'+(r.last||'never')+'</small></span></div>'}).join('');
+  window.AD_ROSTER=x.j.roster;try{$('adSearch').value=''}catch(e){}adFilter();
  }).catch(function(){$('adStats').textContent='Network error'}) }
+function adFilter(){try{var q=(document.getElementById('adSearch').value||'').trim().toLowerCase();
+ var rs=(window.AD_ROSTER||[]).slice().sort(function(a,b){return (b.streak||0)-(a.streak||0)});
+ var f=rs.filter(function(r){return !q||String(r.name||'').toLowerCase().indexOf(q)>=0||String(r.email||'').toLowerCase().indexOf(q)>=0});
+ document.getElementById('adCount').textContent=f.length+' / '+rs.length;
+ document.getElementById('adRoster').innerHTML=f.map(function(r){
+  var role=r.role==='student'?'':(r.role==='owner'?' &#128081;':' &#9989;');
+  return '<div class="trow"><span><b>'+r.name+'</b>'+role+'<br><small>'+r.email+' &middot; '+(r.cls||'')+' &middot; '+(r.status||'')+(r.subscribed?' &middot; SUBSCRIBED':'')+'</small></span><span><small>&#128293; '+(r.streak||0)+' day'+((r.streak||0)===1?'':'s')+'<br>'+(r.last||'never')+'</small></span></div>'}).join('')||'<p class="sub">No students match that search.</p>'}catch(e){}}
 function adGrant(){var e=$('adEmail').value.trim().toLowerCase();if(!e){alert('Enter the student email.');return}
  api({act:'grant',token:TOKEN,email:e}).then(function(x){alert(x.ok?(x.j.name+' is now an admin.'):x.j.err);openAdmin()})}
 function adRevoke(email){if(!confirm('Remove admin rights from '+email+'?'))return;
@@ -964,7 +972,7 @@ api({act:'setpw',token:TOKEN,newPassword:a}).then(function(x){
 function enter(){try{paintHero()}catch(e){}try{paintLogoPhotos()}catch(e){}
 try{loadSubs().then(function(){try{paintTrial()}catch(er){}})}catch(x){}
 try{loadBank()}catch(x){}if(!P){show('login');return}
-$('whoTxt').textContent=P.name;show('home')}
+show('home')}
 function openProfile(){if(!P){show('login');return}
 $('adminBtnZone').style.display=(P&&(P.role==='admin'||P.role==='owner'))?'block':'none';
 paintAvatar($('pAvatar'),P);$('pNameShow').textContent=P.name;
@@ -983,7 +991,7 @@ api({act:'saveprofile',token:TOKEN,profile:pr}).then(function(x){
  setUser(x.j.profile);o.textContent='Profile saved \u2713';openProfileKeepMsg()})
 .catch(function(){e.textContent='Network problem. Try again.'})}
 function openProfileKeepMsg(){paintAvatar($('pAvatar'),P);$('pNameShow').textContent=P.name;$('pMetaShow').textContent=(P.cls||'')+(P.age_range?' \u00b7 Age '+P.age_range:'')+' \u00b7 '+(P.target_exam||'JAMB');
-$('pBadges').innerHTML='<span class="badge" style="background:#0c3a1c">'+P.cls+'</span>'+(P.target_exam?'<span class="badge" style="background:#1d6a34">'+P.target_exam+'</span>':'');$('whoTxt').textContent=P.name}
+$('pBadges').innerHTML='<span class="badge" style="background:#0c3a1c">'+P.cls+'</span>'+(P.target_exam?'<span class="badge" style="background:#1d6a34">'+P.target_exam+'</span>':'')}
 /* profile picture: resize in the browser to a small JPEG before upload */
 function pickPhoto(inp){var f=inp.files&&inp.files[0],m=$('pPhotoMsg');if(!f)return;m.textContent='Processing picture...';
 var r=new FileReader();r.onerror=function(){m.textContent='Could not read that picture.'};
@@ -1623,7 +1631,7 @@ else{var d='Good question. I answer best from the practice bank loaded in this a
 renderSubj();
 try{var sv=JSON.parse(localStorage.getItem('sunshine_sess')||'null');
 if(sv&&sv.p&&sv.p.name){TOKEN=sv.t||'';P=sv.p;U={name:P.name,contact:P.email,cls:P.cls};enter();
- if(TOKEN){api({act:'me',token:TOKEN}).then(function(x){if(x.ok){setUser(x.j.profile);$('whoTxt').textContent=P.name}else if(x.j&&x.j.err==='session expired'){logout()}}).catch(function(){})}}
+ if(TOKEN){api({act:'me',token:TOKEN}).then(function(x){if(x.ok){setUser(x.j.profile)}else if(x.j&&x.j.err==='session expired'){logout()}}).catch(function(){})}}
 else{var pd=null;try{pd=JSON.parse(localStorage.getItem('sunshine_pend')||'null')}catch(e2){}
  if(pd&&pd.contact&&pd.exp&&Date.now()<pd.exp){pend=pd;
   $('vSub').textContent='Your code is still waiting. Enter the 6-digit code we sent to '+pd.contact+'.';
