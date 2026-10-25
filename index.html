@@ -1241,7 +1241,7 @@ function adPayLoad(){if(!$('adPayRows'))return;
  fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'pending',token:TOKEN})}).then(function(r){return r.json()}).then(function(j){
   if(j.err){$('adPayRows').innerHTML='<p class="sub">'+j.err+'</p>';return}
   $('adPayRows').innerHTML=j.rows&&j.rows.length?j.rows.map(function(t){
-   return '<div class="payrow"><b>'+t.txn+'</b> '+naira(t.amount)+'<br><small>'+t.name+' ('+t.email+')<br>'+t.exams+' '+t.period+'<br>Uploaded '+new Date(t.uploaded).toLocaleString()+(t.heard?'<br>How they heard: <b>'+t.heard+'</b>':'')+(t.split?'<br>Split: <b>'+naira(t.split.sam)+'</b> to you ('+t.split.pct+'%) &middot; <b>'+naira(t.split.ptn)+'</b> to partner':'')+'</small>'+
+   return '<div class="payrow"><b style="font-size:1.05rem">'+t.name+'</b><br><small style="color:#f5c518;font-size:.85rem">'+t.email+'</small><br><small>Code <b style="color:#fff">'+t.txn+'</b> &middot; '+naira(t.amount)+' &middot; '+t.exams+' &middot; '+t.period+'<br>Uploaded '+new Date(t.uploaded).toLocaleString()+(t.heard?'<br>How they heard: <b>'+t.heard+'</b>':'')+(t.split?'<br>Split: <b>'+naira(t.split.sam)+'</b> to you ('+t.split.pct+'%) &middot; <b>'+naira(t.split.ptn)+'</b> to partner':'')+'</small>'+
    '<img class="proofimg" src="'+t.img+'" onclick="window.open(\''+t.txn+'\')">'+
    '<div style="display:flex;gap:8px;margin-top:6px"><button class="btn gold" style="flex:1" onclick="adPayAct(\''+t.txn+'\',\'activate\')">Activate '+t.txn+'</button>'+
    '<button class="btn" style="flex:1;background:#7f1d1d" onclick="adPayAct(\''+t.txn+'\',\'reject\')">Reject</button></div></div>'}).join(''):'<p class="sub">No payments waiting.</p>'})
@@ -1673,7 +1673,7 @@ if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sunshine-
 <div class="bnav" id="bnav">
 <button id="bnHome" onclick="nav('home')"><span class="bi">&#127968;</span>Home</button>
 <button id="bnProg" onclick="nav('progress')"><span class="bi">&#128200;</span>Progress</button>
-<button id="bnMock" onclick="nav('mock')"><span class="bi">&#127919;</span>Mock</button>
+<button id="bnTutors" onclick="nav('tutors')"><span class="bi">&#127909;</span>Tutors</button>
 
 <button id="bnAgent" onclick="nav('agent')"><span class="bi">&#9728;</span>Agent</button>
 </div>
@@ -1682,13 +1682,12 @@ function nav(where){
  if(where==='agent'){openChat();return}
  if(MODE==='cbt'||MODE==='mock'){if(!document.getElementById('s-quiz').classList.contains('hidden')&&!confirm('Leave the test? It will not be saved.'))return}
  clearInterval(picks.timerId);
- if(where==='mock'&&!document.getElementById('s-mock').classList.contains('hidden')){show('mock');return}
- if(where==='mock'){openMock();return}
+ if(where==='tutors'){openTutors('math');return}
  if(where==='progress'){openProgress();return}
  show(where);
 }
 function updNav(s){
- var navIds={home:'bnHome',progress:'bnProg',mock:'bnMock',};
+ var navIds={home:'bnHome',progress:'bnProg',mock:'bnTutors',};
  var showNav=['home','subj','utme','utme2','mode','count','tutors','player','progress','mock','subs','profile','admin','done'].indexOf(s)>=0;
  document.getElementById('bnav').style.display=showNav?'flex':'none';
  Object.keys(navIds).forEach(function(k){document.getElementById(navIds[k]).classList.toggle('on',k===s)});
