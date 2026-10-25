@@ -576,7 +576,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="exam on" onclick="pickExam('NECO')"><b>NECO</b><small>NECO Practice &middot; LIVE</small></div>
 <div class="exam on" onclick="openUtme()"><b>POST-UTME</b><small>Schools &amp; Courses &middot; LIVE</small></div>
 </div>
-<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v18.3</b></p>
+<p class="sub" style="margin-top:12px">JAMB, WAEC and NECO practice are live: questions across 12 subjects, timed tests, full explanations, and the Prime Scholars Agent to help you. Works offline once loaded. <b>v18.7</b></p>
 <p class="sub" id="trialNote" style="display:none;color:#f7d774;font-weight:700"></p>
 <div style="text-align:center;margin-top:14px"><button class="btn gold" onclick="openTutors('math')">&#127891; Video Tutors — watch full lessons</button></div>
 <div style="text-align:center;margin-top:10px"><button class="btn ghost" onclick="openProgress()">&#128200; My Progress</button></div>
@@ -1103,15 +1103,15 @@ function paintTrial(){var el=document.getElementById('trialNote');if(!el)return;
  else el.style.display='none'}
 function openPrivacy(){show('privacy')}
 function closePrivacy(){show('login')}
-function openSubs(){show('subs');$('subStatus').innerHTML='<p class="sub">Loading...</p>';
- loadSubs().then(function(){subRender()});subTxns()}
+function openSubs(){if(!P){try{loginMode('in')}catch(e){}show('login');return}show('subs');$('subStatus').innerHTML='<p class="sub">Loading...</p>';
+ loadSubs().then(function(){try{subRender()}catch(e){}});subTxns()}
 function subRender(){
  var names={jamb:'JAMB',waec:'WAEC',neco:'NECO',utme:'Post-UTME',all:'Full access'};
  var st='';
  if(isBoss()){st='<p class="sub">You are an admin: full access, no subscription needed.</p>'}
  if(SUBS&&Object.keys(SUBS).length){st+='<p class="sub" style="color:#f5c518;font-weight:700">ACTIVE</p>';
   Object.keys(SUBS).forEach(function(k){st+='<div class="txnline"><b>'+(names[k]||k)+'</b> till '+String(SUBS[k]).slice(0,10)+' (all exams and videos included)</div>'})}
- if(!isBoss()&&!Object.keys(SUBS||{}).length){st+='<div class="lab">Your school / institution</div><div class="pickbox ph" id="subHeardBox" onclick="openPick(\'subHeard\')"><span class="pv">'+((P.heard_from||'').replace(/</g,'&lt;')||'Select your school or institution')+'</span><span class="chev">&#9662;</span></div><input type="hidden" id="subHeard" value="'+(P.heard_from||'').replace(/"/g,'')+'">'+'<p class="sub">No active subscription. Subscribe below: \u20a62,000 for 3 months, or \u20a68,000 for a full year. Every plan unlocks everything.</p>'}
+ if(!isBoss()&&!Object.keys(SUBS||{}).length){st+='<div class="lab">Your school / institution</div><div class="pickbox ph" id="subHeardBox" onclick="openPick(\'subHeard\')"><span class="pv">'+(((P||{}).heard_from||'').replace(/</g,'&lt;')||'Select your school or institution')+'</span><span class="chev">&#9662;</span></div><input type="hidden" id="subHeard" value="'+((P||{}).heard_from||'').replace(/"/g,'')+'">'+'<p class="sub">No active subscription. Subscribe below: \u20a62,000 for 3 months, or \u20a68,000 for a full year. Every plan unlocks everything.</p>'}
  $('subStatus').innerHTML=st;
  var PL=[['quarterly','3 Months','2,000'],['yearly','12 Months','8,000']];
  $('subPlans').innerHTML=PL.map(function(p){return '<div class="exam '+(SUB.plan===p[0]?'on':'off')+'" onclick="subPlan(\''+p[0]+'\')"><b>'+p[1]+'</b><small>\u20a6'+p[2]+'</small></div>'}).join('');
@@ -1119,6 +1119,7 @@ function subRender(){
  $('subGo').style.opacity=1}
 function subPlan(p){SUB.plan=p;SUB.txn=null;$('payBox').style.display='none';subRender()}
 function subCreate(){
+ if(!P||!TOKEN){alert('Please sign in first, then subscribe.');return}
  var sh=((document.getElementById('subHeard')||{}).value||'').trim();
  var pre=(sh&&sh!==P.heard_from)?api({act:'saveprofile',token:TOKEN,profile:{heard_from:sh}}).then(function(x){if(x.ok){P.heard_from=sh}}).catch(function(){}):Promise.resolve();
  $('subGo').textContent='Creating...';
@@ -1322,7 +1323,7 @@ if(vis&&t&&!covered){dbg('')}else{
  setTimeout(qWatch,1500);
 }}catch(e){}}
 function dbg(s){var d=document.getElementById('qdbg');if(!d)return;d.textContent=s||'';d.style.display=s?'block':'none'}
-var WERR=0;function werr(m){WERR++;try{var g=document.getElementById('gdbg');if(!g){g=document.createElement('div');g.id='gdbg';g.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(140,0,0,.94);color:#fff;font:700 12px/1.4 system-ui;padding:8px 10px';(document.body||document.documentElement).appendChild(g)}g.textContent='v11 ERROR '+WERR+': '+m;dbg('v11 JS ERROR: '+m)}catch(e){}}
+var WERR=0;function werr(m){WERR++;try{var g=document.getElementById('gdbg');if(!g){g=document.createElement('div');g.id='gdbg';g.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(140,0,0,.94);color:#fff;font:700 12px/1.4 system-ui;padding:8px 10px';(document.body||document.documentElement).appendChild(g)}g.textContent='v11 ERROR '+WERR+': '+m;try{clearTimeout(window._werrT);window._werrT=setTimeout(function(){var gg=document.getElementById('gdbg');if(gg)gg.remove()},15000)}catch(e3){};dbg('v11 JS ERROR: '+m)}catch(e){}}
 window.addEventListener('error',function(e){werr((e&&e.message?e.message:'unknown')+(e&&e.lineno?' (line '+e.lineno+')':''))});
 window.addEventListener('unhandledrejection',function(e){werr('P: '+String(e&&e.reason||''))});
 function pick(k){if(picks.locked)return;picks.locked=true;picks.chosen[picks.idx]=k;var q=picks.order[picks.idx];
