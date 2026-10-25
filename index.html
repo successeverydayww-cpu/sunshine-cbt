@@ -292,6 +292,9 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 @keyframes landpulse{0%,100%{filter:drop-shadow(0 0 10px rgba(245,183,10,.35))}50%{filter:drop-shadow(0 0 22px rgba(245,183,10,.6))}}
 .landsub{color:#cfe0d2;font-size:.92rem;line-height:1.55;max-width:420px;margin:8px auto 0}
 .landnote{color:#8fa895;font-size:.74rem;margin:12px 0 0}
+.sschips{display:flex;gap:10px;justify-content:center;align-items:center;margin:16px 0 0}
+.sschips span{border:1.5px solid #f5b70a;color:#f5b70a;font-weight:800;border-radius:12px;padding:8px 18px;font-size:.95rem;background:rgba(245,183,10,.08)}
+.sschips em{font-style:normal;color:#8fa895;font-size:.72rem;max-width:120px;line-height:1.4;text-align:left}
 .landsec{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(245,183,10,.28);border-radius:22px;padding:22px 18px;margin:16px 14px 0}
 .landsec h2{color:#f5b70a;font-size:1.1rem;margin:0 0 10px}
 .landp{color:#dbe7dc;font-size:.85rem;line-height:1.6;margin:0 0 12px}
@@ -326,7 +329,8 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="landhero">
 <div class="logo lg" style="max-width:230px"><svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d6a34"/><stop offset="1" stop-color="#0c3a1c"/></linearGradient></defs><rect x="4" y="4" width="292" height="142" rx="14" fill="url(#lg2)" stroke="#f5b70a" stroke-width="5"/><rect x="12" y="12" width="276" height="126" rx="9" fill="none" stroke="#f5b70a" stroke-width="1.5" opacity=".7"/><g><path d="M150 22 L196 40 L150 58 L104 40 Z" fill="#f5b70a"/><path d="M130 46 L130 58 Q150 68 170 58 L170 46 L150 55 Z" fill="#f4f1e6"/><line x1="196" y1="40" x2="196" y2="54" stroke="#f5b70a" stroke-width="3"/><circle cx="196" cy="57" r="3.5" fill="#f5b70a"/><rect x="118" y="72" width="64" height="36" rx="4" fill="#f4f1e6"/><path d="M126 100 L140 88 L150 94 L164 80" stroke="#f5b70a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M164 80 L156 80.5 M164 80 L163 88" stroke="#f5b70a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M110 108 L190 108 L198 118 L102 118 Z" fill="#f5b70a"/></g><text x="150" y="136" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="bold" font-size="21" fill="#fff">Prime Scholars</text></svg></div>
 <h1 class="landtitle">Welcome to Prime Scholars Learning Technologies</h1>
-<p class="landsub">The complete exam practice platform, built for Nigerian students &mdash; from SS1 classroom to JAMB, WAEC and NECO success.</p>
+<p class="landsub">The complete exam practice platform, built for Nigerian students &mdash; from first-year classroom to JAMB, WAEC and NECO success.</p>
+<div class="sschips"><span>SS1</span><span>SS2</span><span>SS3</span><em>Built for every senior class</em></div>
 <button class="btn" onclick="show('login')" style="font-size:1.05rem;padding:16px;margin-top:16px">Get Started</button>
 <p class="landnote">Free to start &middot; Works on any phone &middot; No installation needed</p>
 </div>
@@ -345,6 +349,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="landsec">
 <h2>How the app helps you</h2>
 <div class="landfeat">
+<div><i>&#9728;</i><div><b>Prime Scholars Agent &mdash; your AI study companion</b><span>A live assistant inside the app. Ask it anything about any question: why an answer is right, how to solve it step by step, or what to study next. It answers you directly, any time of day.</span></div></div>
 <div><i>&#10003;</i><div><b>36,000+ explained questions</b><span>Covers JAMB, WAEC and NECO across every subject &mdash; English, Maths, Physics, Chemistry, Biology, Economics, Government, Literature and more.</span></div></div>
 <div><i>&#9654;</i><div><b>Video classes for your weak spots</b><span>After every test, the app finds the topics you struggled with and lines up short video classes to fix them.</span></div></div>
 <div><i>&#9201;</i><div><b>Real exam conditions</b><span>Timed sessions, instant marking, and a full review of every answer &mdash; so the real exam feels like just another practice day.</span></div></div>
@@ -359,11 +364,18 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="landp" style="margin-bottom:0">Built here, for here. The syllabus, the exam format, the marking style &mdash; all matched to what you will actually face on exam day. Whether you are in SS1 building your foundation, SS2 sharpening, or SS3 counting down, Prime Scholars meets you at your level.</p>
 </div>
 
+<div class="landsec" style="text-align:center">
+<h2>Meet the Prime Scholars Agent</h2>
+<p class="landp">Have a question about the app before you sign up? Chat with the Prime Scholars Agent &mdash; a live assistant that answers questions about Prime Scholars, helps you get started, and passes anything important straight to the team.</p>
+<a class="btn" href="https://app.base44.com/superagent/6a20ddeb89bb6423ccb075d2" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;font-size:.95rem;padding:14px 22px">Chat with the Agent</a>
+<p class="landnote">Tap once &mdash; no sign-up needed to ask a question.</p>
+</div>
+
 <div class="landcta">
 <h2>Ready to start practising?</h2>
 <p class="landp">Create your free account in under a minute.</p>
 <button class="btn" onclick="show('login')" style="font-size:1.05rem;padding:16px">Get Started</button>
-<p class="landnote">Questions? successeverydayww@gmail.com &middot; +234 913 235 2500</p>
+<p class="landnote">Questions? <a href="mailto:successeverydayww@gmail.com?subject=Hello%20from%20Prime%20Scholars" style="color:#f5b70a;text-decoration:underline">Email us</a> &middot; <a href="https://app.base44.com/superagent/6a20ddeb89bb6423ccb075d2" target="_blank" rel="noopener" style="color:#f5b70a;text-decoration:underline">Chat with the Agent</a></p>
 </div>
 </div>
 
@@ -384,7 +396,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 </div>
 <button class="linkbtn" onclick="forgot()">Forgot password? Get a code</button>
 <p class="sub" style="text-align:center;margin-top:14px">By using this app you agree to our <a href="privacy.html" style="color:var(--g2)">Privacy Policy and Terms</a>.</p>
-<p class="sub" style="text-align:center">Questions? successeverydayww@gmail.com &middot; +234 913 235 2500</p>
+<p class="sub" style="text-align:center">Questions? <a href="mailto:successeverydayww@gmail.com?subject=Hello%20from%20Prime%20Scholars" style="color:var(--g2);text-decoration:underline">Email us</a> &middot; <a href="https://app.base44.com/superagent/6a20ddeb89bb6423ccb075d2" target="_blank" rel="noopener" style="color:var(--g2);text-decoration:underline">Chat with the Agent</a></p>
 </div>
 <div id="boxNew" class="hidden">
 <h2>Create your student account</h2>
@@ -471,7 +483,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <button class="btn" onclick="changePw()">Change password</button>
 <button class="btn ghost" onclick="logout()">Log out</button>
 <div id="adminBtnZone" style="display:none;text-align:center;margin-top:16px"><button class="btn gold" onclick="openAdmin()">&#128273; Admin Dashboard</button></div>
-<p class="sub" style="text-align:center;margin-top:16px"><a href="privacy.html" style="color:var(--g2)">Privacy Policy and Terms</a> &middot; successeverydayww@gmail.com &middot; +234 913 235 2500</p>
+<p class="sub" style="text-align:center;margin-top:16px"><a href="privacy.html" style="color:var(--g2)">Privacy Policy and Terms</a> &middot; <a href="mailto:successeverydayww@gmail.com?subject=Hello%20from%20Prime%20Scholars" style="color:var(--g2);text-decoration:underline">Email us</a> &middot; <a href="https://app.base44.com/superagent/6a20ddeb89bb6423ccb075d2" target="_blank" rel="noopener" style="color:var(--g2);text-decoration:underline">Chat with the Agent</a></p>
 <div style="margin-top:14px;padding-top:14px;border-top:2px solid #fdecea">
 <h3 style="color:#b00020;margin:0 0 6px">Danger zone</h3>
 <p class="sub">Deleting your account removes your profile and progress from Prime Scholars permanently.</p>
@@ -676,7 +688,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <button class="back" onclick="closePrivacy()">&#8592; Back</button>
 <div class="card" style="animation:none">
 <h2>Terms &amp; Privacy Policy</h2>
-<p class="sub">Prime Scholars LT &middot; operated by Samuel Amos, Prime Scholars Learning Technologies, Uyo, Akwa Ibom State, Nigeria.<br>Contact: successeverydayww@gmail.com &middot; +234 913 235 2500<br>Effective date: 24 October 2026. Written in plain language on purpose &mdash; if any part is unclear, contact us and we will explain it.</p>
+<p class="sub">Prime Scholars LT &middot; operated by Samuel Amos, Prime Scholars Learning Technologies, Uyo, Akwa Ibom State, Nigeria.<br>Contact: <a href="mailto:successeverydayww@gmail.com?subject=Hello%20from%20Prime%20Scholars" style="color:var(--g2);text-decoration:underline">successeverydayww@gmail.com</a> &middot; <a href="https://app.base44.com/superagent/6a20ddeb89bb6423ccb075d2" target="_blank" rel="noopener" style="color:var(--g2);text-decoration:underline">Chat with the Agent</a><br>Effective date: 24 October 2026. Written in plain language on purpose &mdash; if any part is unclear, contact us and we will explain it.</p>
 
 <h3>A. Terms of Service</h3>
 <p class="sub"><b>1. Agreement.</b> By creating an account or using Prime Scholars LT ("the app", "we", "us") you accept these terms. If you are under 18, your parent or guardian must read and approve them with you.</p>
@@ -704,7 +716,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="sub"><b>21. Your rights.</b> You may ask us to show you your data, correct it, or delete it &mdash; from Profile &rarr; Danger Zone, or by email. We act within 30 days.</p>
 <p class="sub"><b>22. Retention.</b> Account data is kept while your account is active and deleted within 30 days of your deletion request. Payment records are kept for accounting purposes as required by law.</p>
 <p class="sub"><b>23. Changes to this policy.</b> Updates will be posted here with a new effective date.</p>
-<p class="sub"><b>24. Contact.</b> Questions about your data or these terms: successeverydayww@gmail.com &middot; +234 913 235 2500 (Mon&ndash;Sat, 8am&ndash;7pm WAT).</p>
+<p class="sub"><b>24. Contact.</b> Questions about your data or these terms: <a href="mailto:successeverydayww@gmail.com?subject=Hello%20from%20Prime%20Scholars" style="color:var(--g2);text-decoration:underline">successeverydayww@gmail.com</a> &middot; <a href="https://app.base44.com/superagent/6a20ddeb89bb6423ccb075d2" target="_blank" rel="noopener" style="color:var(--g2);text-decoration:underline">Chat with the Agent</a> (Mon&ndash;Sat, 8am&ndash;7pm WAT).</p>
 <button class="btn gold" onclick="closePrivacy()">I understand</button>
 </div>
 </div>
