@@ -1020,6 +1020,7 @@ function adPayAct(txn,act){if(act==='reject'&&!confirm('Reject transaction '+txn
   adPayLoad()}).catch(function(){alert('Network error.')})}
 
 
+var BANK_SEED=JSON.parse(JSON.stringify(BANK));
 /* ---- EXTERNAL JAMB BANK (v15) ---- */
 var BANK_URL='https://successeverydayww-cpu.github.io/sunshine-cbt/bank_jamb.json';
 var BANK_URL_W='https://successeverydayww-cpu.github.io/sunshine-cbt/bank_waec.json';
@@ -1032,11 +1033,11 @@ function mergeBank(j){(j&&j.subjects||[]).forEach(function(sx){
 function loadBank(){if(bankLoaded)return Promise.resolve(true);
  if(bankPromise)return bankPromise;
  bankPromise=fetch(BANK_URL+'?cb='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()})
- .then(function(j){mergeBank(j);bankLoaded=true;BANKS.JAMB=BANK;
+ .then(function(j){BANK=JSON.parse(JSON.stringify(BANK_SEED));mergeBank(j);bankLoaded=true;BANKS.JAMB=BANK;
   try{if(window.caches){caches.open('sunshine-bank-v1').then(function(c){return c.put(BANK_URL,new Response(JSON.stringify(j),{headers:{'Content-Type':'application/json'}}))})}}catch(x){}
   return true})
  .catch(function(){
-  try{if(window.caches){return caches.open('sunshine-bank-v1').then(function(c){return c.match(BANK_URL)}).then(function(m){if(!m)throw 0;return m.json()}).then(function(j){mergeBank(j);bankLoaded=true;BANKS.JAMB=BANK;return true})}}catch(x){}
+  try{if(window.caches){return caches.open('sunshine-bank-v1').then(function(c){return c.match(BANK_URL)}).then(function(m){if(!m)throw 0;return m.json()}).then(function(j){BANK=JSON.parse(JSON.stringify(BANK_SEED));mergeBank(j);bankLoaded=true;BANKS.JAMB=BANK;return true})}}catch(x){}
   return false});
  return bankPromise}
 function loadWaec(){if(waecLoaded)return Promise.resolve(true);
@@ -1051,8 +1052,10 @@ function loadWaec(){if(waecLoaded)return Promise.resolve(true);
  return waecPromise}
 function bankGuardW(cb){if(waecLoaded){return true}
  loadWaec().then(function(){cb()});return false}
-function bankGuard(cb){if(bankLoaded||bankTried||!(navigator.onLine)){bankTried=true;return true}
+function bankGuard(cb){var wl=(EXAM==='WAEC')?waecLoaded:bankLoaded;
+ if(wl||bankTried||!(navigator.onLine)){bankTried=true;return true}
  bankTried=true;
+ if(EXAM==='WAEC'){loadWaec().then(function(){cb()});return false}
  loadBank().then(function(){cb()});return false}
 function noteSeen(){try{
  var seen=JSON.parse(localStorage.getItem('sun_seen')||'{}');
