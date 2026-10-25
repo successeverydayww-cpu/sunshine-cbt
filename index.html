@@ -472,7 +472,9 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <input type="file" id="pFile" accept="image/*" class="hidden" onchange="pickPhoto(this)">
 <button class="btn ghost" onclick="document.getElementById('pFile').click()">Upload / change profile picture</button>
 <div class="ok" id="pPhotoMsg"></div>
-
+</div>
+<div class="card"><h3>&#128176; My subscription</h3><div id="profSubs"><p class="sub">Loading...</p></div></div>
+<div class="card">
 <h3>About you</h3>
 <div class="lab">Full name</div><input class="f" id="pName" placeholder="Full name">
 <div class="lab">Class</div><div class="pickbox ph" id="pClsBox" onclick="openPick('pCls')"><span class="pv">Select class</span><span class="chev">&#9662;</span></div>
@@ -981,6 +983,11 @@ function enter(){try{paintHero()}catch(e){}try{paintLogoPhotos()}catch(e){}
 try{loadSubs().then(function(){try{paintTrial()}catch(er){}})}catch(x){}
 try{loadBank()}catch(x){}if(!P){show('login');return}
 show('home')}
+function paintProfSubs(){var el=document.getElementById('profSubs');if(!el)return;
+ var names={jamb:'JAMB',waec:'WAEC',neco:'NECO',utme:'Post-UTME',all:'All exams (full access)'};
+ if(!P||isBoss()){el.innerHTML='<p class="sub">Full access (admin).</p>';return}
+ if(!SUBS||!Object.keys(SUBS).length){el.innerHTML='<p class="sub">No active subscription yet. Open Subscriptions from the home screen to subscribe.</p>';return}
+ el.innerHTML=Object.keys(SUBS).map(function(k){return '<div class="txnline"><b>'+(names[k]||k)+'</b> till '+String(SUBS[k]).slice(0,10)+'</div>'}).join('')}
 function openProfile(){if(!P){show('login');return}
 $('adminBtnZone').style.display=(P&&(P.role==='admin'||P.role==='owner'))?'block':'none';
 paintAvatar($('pAvatar'),P);$('pNameShow').textContent=P.name;
@@ -989,7 +996,7 @@ $('pBadges').innerHTML='<span class="badge" style="background:#0c3a1c">'+P.cls+'
 $('pName').value=P.name||'';$('pCls').value=P.cls||'SS1';paintPickBox('pCls',$('pCls').value);$('pAge').value=P.age_range||'';$('pGender').value=P.gender||'';$('pBio').value=P.bio||'';
 $('pPhone').value=P.phone||'';$('pGuard').value=P.guardian_phone||'';$('pExam').value=P.target_exam||'JAMB';$('pSubj').value=P.subjects||'';$('pEmail').value=P.email||'';
 $('pErr').textContent='';$('pOk').textContent='';$('cpErr').textContent='';$('cpOk').textContent='';$('pPhotoMsg').textContent='';
-show('profile')}
+paintProfSubs();show('profile')}
 function saveProfile(){var e=$('pErr'),o=$('pOk');e.textContent='';o.textContent='';
 var pr={name:$('pName').value.trim(),cls:$('pCls').value,age_range:$('pAge').value,gender:$('pGender').value,bio:$('pBio').value.trim(),phone:$('pPhone').value,guardian_phone:$('pGuard').value,target_exam:$('pExam').value,subjects:$('pSubj').value.trim()};
 if(pr.name.length<2){e.textContent='Enter your name.';return}
@@ -1158,8 +1165,6 @@ function subRender(){
  var names={jamb:'JAMB',waec:'WAEC',neco:'NECO',utme:'Post-UTME',all:'All exams (full access)'};
  var st='';
  if(isBoss()){st='<p class="sub">You are an admin: full access, no subscription needed.</p>'}
- if(SUBS&&Object.keys(SUBS).length){st+='<p class="sub" style="color:#f5c518;font-weight:700">ACTIVE</p>';
-  Object.keys(SUBS).forEach(function(k){st+='<div class="txnline"><b>'+(names[k]||k)+'</b> till '+String(SUBS[k]).slice(0,10)+' (videos + every feature of this exam)</div>'})}
  if(!isBoss()&&!Object.keys(SUBS||{}).length){st+='<div class="lab">Your school / institution</div><div class="pickbox ph" id="subHeardBox" onclick="openPick(\'subHeard\')"><span class="pv">'+(((P||{}).heard_from||'').replace(/</g,'&lt;')||'Select your school or institution')+'</span><span class="chev">&#9662;</span></div><input type="hidden" id="subHeard" value="'+((P||{}).heard_from||'').replace(/"/g,'')+'">'+'<p class="sub">No active subscription yet. Pick your exam type(s) below: \u20a62,000 for 3 months or \u20a68,000 for a year, per exam type.</p>'}
  $('subStatus').innerHTML=st;
  $('subExams').innerHTML=SUBEXAM.map(function(x){return '<div class="exam '+(SUB.exams.indexOf(x[0])>=0?'on':'off')+'" onclick="subExam(\''+x[0]+'\')"><b>'+x[1]+'</b><small>\u20a6'+subPerExam().toLocaleString('en-NG')+(SUB.plan==='yearly'?'/year':'/3 months')+'</small></div>'}).join('');
