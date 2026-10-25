@@ -1213,7 +1213,7 @@ function proofPicked(inp){var f=inp.files&&inp.files[0];if(!f)return;inp.value='
   img.src=rd.result};
  rd.readAsDataURL(f)}
 function openHistory(){if(!P){try{loginMode('in')}catch(e){}show('login');return}show('history');$('histTxns').innerHTML='<p class="sub">Loading...</p>';subTxns()}
-function subTxns(){if(!TOKEN){$('histTxns').innerHTML='<p class="sub">Sign in to see your payments.</p>';return}}
+function subTxns(){if(!TOKEN){var __t=document.getElementById('histTxns');if(__t)__t.innerHTML='<p class="sub">Sign in to see your payments.</p>';return}
  fetch(PAYAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({act:'mytxns',token:TOKEN})}).then(function(r){return r.json()}).then(function(j){
   var lbl={awaiting:'Awaiting transfer',pending:'Checking proof',active:'ACTIVE',rejected:'Rejected',expired:'Expired'};
   var col={awaiting:'#9fd8ae',pending:'#f5c518',active:'#4ade80',rejected:'#f87171',expired:'#f87171'};
