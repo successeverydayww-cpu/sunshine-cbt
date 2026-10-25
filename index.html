@@ -224,6 +224,9 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 .tabs{background:rgba(12,58,28,.08);border-radius:999px;padding:4px}
 .tab{border-radius:999px;font-weight:700;transition:all .2s ease}
 .tab.on{background:linear-gradient(135deg,var(--g2),var(--g1));color:#fff;box-shadow:0 4px 14px rgba(12,58,28,.35)}
+.gdiv{display:flex;align-items:center;margin:2px 0 10px}
+.gdiv:before,.gdiv:after{content:"";flex:1;height:1px;background:rgba(255,255,255,.18)}
+.gdiv span{color:#a9b5a3;font-size:.72rem;letter-spacing:1px;padding:0 10px;text-transform:uppercase}
 /* exam tiles */
 .examrow{gap:12px;margin-top:14px}
 .exam{border-radius:18px;border:1.5px solid #dfe7dc;background:linear-gradient(180deg,#fff,#f7faf5);padding:16px 8px;transition:transform .16s ease,box-shadow .16s ease;box-shadow:0 3px 10px rgba(3,18,9,.06)}
@@ -287,6 +290,11 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <input class="f" id="iPass" placeholder="Password" type="password" autocomplete="current-password">
 <div class="err" id="iErr"></div>
 <button class="btn" id="btnIn" onclick="doLogin()">Sign in</button>
+<div id="gWrap" style="display:none;margin-top:14px">
+<div class="gdiv"><span>or</span></div>
+<div id="gBtn" style="display:flex;justify-content:center"></div>
+<p class="sub" style="text-align:center;margin-top:6px">New students can also start with Google.</p>
+</div>
 <button class="linkbtn" onclick="forgot()">Forgot password? Get a code</button>
 <p class="sub" style="text-align:center;margin-top:14px">By using this app you agree to our <a href="privacy.html" style="color:var(--g2)">Privacy Policy and Terms</a>.</p>
 <p class="sub" style="text-align:center">Questions? successeverydayww@gmail.com &middot; +234 913 235 2500</p>
@@ -305,6 +313,11 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <label style="display:flex;gap:8px;align-items:flex-start;font-size:.85rem;margin:6px 0"><input type="checkbox" id="lAgree" style="margin-top:3px"> <span>I have read and accept the <a href="#" onclick="openPrivacy();return false" style="color:#0c3a1c;font-weight:700;text-decoration:underline">Terms &amp; Privacy Policy</a></span></label>
 <div class="err" id="lErr"></div>
 <button class="btn" id="btnSend" onclick="sendCode()">Send Verification Code</button>
+<div id="gWrap2" style="display:none;margin-top:14px">
+<div class="gdiv"><span>or</span></div>
+<div id="gBtn2" style="display:flex;justify-content:center"></div>
+<p class="sub" style="text-align:center;margin-top:6px">One tap with Google — no email code needed.</p>
+</div>
 </div>
 </div>
 </div>
@@ -607,6 +620,18 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 </div>
 </div>
 
+<div id="gSheet" class="hidden" style="position:fixed;inset:0;z-index:90;background:rgba(3,18,9,.55);display:flex;align-items:flex-end;justify-content:center">
+<div style="background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:420px;padding:22px 18px 26px">
+<h3 style="margin:0 0 4px;color:#0d3a1c">Almost done, <span id="gName"></span>!</h3>
+<p style="color:#4c5a49;font-size:.85rem;margin:0 0 14px">Tell us your class so we place you right.</p>
+<div style="display:flex;gap:10px;margin-bottom:14px" id="gClassRow">
+<button class="gcls" onclick="gPickCls(this)" style="flex:1;padding:14px 6px;border:1.5px solid #dfe7dc;border-radius:14px;background:#f7faf5;font-weight:700;color:#0d3a1c">SS1</button>
+<button class="gcls" onclick="gPickCls(this)" style="flex:1;padding:14px 6px;border:1.5px solid #dfe7dc;border-radius:14px;background:#f7faf5;font-weight:700;color:#0d3a1c">SS2</button>
+<button class="gcls" onclick="gPickCls(this)" style="flex:1;padding:14px 6px;border:1.5px solid #dfe7dc;border-radius:14px;background:#f7faf5;font-weight:700;color:#0d3a1c">SS3</button>
+</div>
+<p style="color:#6b7a66;font-size:.72rem;margin:0 0 12px">By continuing you agree to our <a href="privacy.html" style="color:#0d3a1c;font-weight:700">Privacy Policy and Terms</a>.</p>
+<button id="gGo" onclick="gCreate()" style="width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,#f5b70a,#0d3a1c);color:#fff;font-weight:800;font-size:1rem">Finish sign-up</button>
+</div></div>
 <div id="pickModal" class="hidden" onclick="if(event.target===this)closePick()">
 <div class="picksheet">
 <div class="pickhead"><b id="pickTitle"></b><button onclick="closePick()">&#10006;</button></div>
@@ -716,11 +741,49 @@ var API='https://superagent-ccb075d2.base44.app/functions/sunshineAuth';
 var TOKEN='',P=null,resetMode=false;
 function api(body){return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})}
 function $(id){return document.getElementById(id)}
+initGoogle();
 function loginMode(m){$('boxIn').classList.toggle('hidden',m!=='in');$('boxNew').classList.toggle('hidden',m!=='new');$('tabIn').classList.toggle('on',m==='in');$('tabNew').classList.toggle('on',m==='new')}
 function saveSess(){try{localStorage.setItem('sunshine_sess',JSON.stringify({t:TOKEN,p:P}))}catch(x){}}
 function setUser(p){updStreak();P=p;U={name:p.name,contact:p.email,cls:p.cls};saveSess()}
 function paintAvatar(el,p){if(p&&p.photo){el.style.backgroundImage='url('+p.photo+')';el.textContent=''}else{el.style.backgroundImage='none';el.textContent=p&&p.name?p.name.trim().charAt(0).toUpperCase():'\u{1F464}'}}
 /* sign in with password */
+var GOOGLE_CID=''; /* set the Google OAuth client ID here, then deploy */
+var gPending=null,gCls='';
+function initGoogle(){
+ if(!GOOGLE_CID||window.__ginit)return;window.__ginit=1;
+ var s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.defer=true;
+ s.onload=function(){try{
+  google.accounts.id.initialize({client_id:GOOGLE_CID,callback:gCredential,auto_select:false,ux_mode:'popup',cancel_on_tap_outside:true});
+  ['gBtn','gBtn2'].forEach(function(id){var c=document.getElementById(id);
+   if(c){google.accounts.id.renderButton(c,{theme:'outline',size:'large',shape:'pill',text:'continue_with',width:290,locale:'en-GB'})}});
+  document.getElementById('gWrap').style.display='block';
+  var w2=document.getElementById('gWrap2');if(w2)w2.style.display='block';
+ }catch(e){}};
+ document.body.appendChild(s);
+}
+function gCredential(resp){
+ var c=resp&&resp.credential;if(!c){$('iErr').textContent='Google sign-in was cancelled.';return}
+ var e=$('iErr');e.textContent='Signing you in with Google...';
+ api({act:'glogin',credential:c}).then(function(x){
+  var j=x.j||{};
+  if(j.needsignup){gPending={credential:c,email:j.email,name:j.name};$('gName').textContent=(j.name||j.email||'').split(' ')[0];document.getElementById('gSheet').classList.remove('hidden');e.textContent='';return}
+  if(!j.ok){e.textContent=j.err||'Google sign-in failed.';return}
+  TOKEN=j.token;setUser(j.profile);enter()
+ }).catch(function(){e.textContent='Network problem. Try again.'})
+}
+function gPickCls(btn){gCls=btn.textContent.trim();document.querySelectorAll('.gcls').forEach(function(b){b.style.borderColor='#dfe7dc';b.style.background='#f7faf5'});btn.style.borderColor='#f5b70a';btn.style.background='#fff8e0'}
+function gCreate(){
+ if(!gPending)return;
+ if(!gCls){document.querySelectorAll('.gcls').forEach(function(b){b.style.borderColor='#e05a2b'});return}
+ var e=$('iErr');
+ api({act:'glogin',credential:gPending.credential,cls:gCls,heard:'Google signup'}).then(function(x){
+  var j=x.j||{};document.getElementById('gSheet').classList.add('hidden');
+  if(!j.ok){e.textContent=j.err||'Could not finish Google sign-up.';return}
+  TOKEN=j.token;setUser(j.profile);enter()
+ }).catch(function(){e.textContent='Network problem. Try again.'})
+}
+function gSheetClose(ev){if(ev.target.id==='gSheet'){document.getElementById('gSheet').classList.add('hidden')}}
+document.addEventListener('click',gSheetClose);
 function doLogin(){var e=$('iErr'),em=$('iEmail').value.trim().toLowerCase(),pw=$('iPass').value;try{localStorage.setItem('sunshine_last_email',em)}catch(x){}
 if(!/^\S+@\S+\.\S+$/.test(em)){e.textContent='Enter your email address.';return}
 if(!pw){e.textContent='Enter your password.';return}
