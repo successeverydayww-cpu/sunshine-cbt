@@ -40,6 +40,8 @@ input.f:focus{outline:none;border-color:var(--g2)}
 .who{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:8px 18px;font-size:.78rem}
 .who button{background:none;border:1px solid #ffffff88;color:#fff;border-radius:8px;padding:4px 10px;font-family:inherit;font-size:.72rem;cursor:pointer}
 .examrow{display:flex;gap:10px;margin-top:10px}
+#tutorSubjs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+#tutorSubjs .exam{flex:0 0 30%;min-width:88px;box-sizing:border-box}
 .exam{flex:1;border:2px solid #d4dccf;background:#fff;border-radius:12px;padding:13px 6px;text-align:center}
 .exam.on{border-color:var(--g2);background:linear-gradient(135deg,var(--g2),var(--g1));color:#fff;cursor:pointer}
 .exam.off{opacity:1;background:#fff;border:2px dashed #cfc7b4;color:#4c4636;box-shadow:none}
@@ -564,7 +566,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <button class="back" onclick="show('home')">&#8592; Home</button>
 <div class="card">
 <h2>Video Tutors</h2>
-<p class="sub">Full class-length lessons (30 minutes and above) for every topic, hand-checked. Mathematics and Physics are live; more subjects coming.</p>
+<p class="sub">Full class-length lessons (30 minutes and above) for every topic, hand-checked. English, Mathematics, Physics, Chemistry and Biology are live. Swipe the row to see all five.</p>
 <div class="examrow" id="tutorSubjs"></div>
 </div>
 <div class="card" id="tutorList"></div>
@@ -790,7 +792,7 @@ if(s==='subj'){try{document.getElementById('subjTitle').textContent=EXAM+' \u00b
 /* ---- tutors ---- */
 function openTutors(sid){if(!hasSub('any')){gateGo('any','video classes');return}
  var subj=TUTORS.subjects.find(function(x){return x.id===sid});
- var ss=TUTORS.subjects.map(function(s){
+ var ss=TUTORS.subjects.filter(function(s){return s.live}).map(function(s){
   var n=TUTORS.topics.filter(function(t){return t.sub===s.id}).length;
   return '<div class="exam '+(s.id===sid?'on':'off')+'" onclick="'+(s.live?"openTutors('"+s.id+"')":"toastSoon('"+s.name+"')")+'"><b>'+s.icon+' '+s.name+'</b><small>'+(s.live?n+' full classes':'coming soon')+'</small></div>'
  }).join('');
