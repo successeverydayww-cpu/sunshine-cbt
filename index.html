@@ -1273,7 +1273,9 @@ function paintSchool(){try{
  ['schoolStrip','schoolStrip2'].forEach(function(id){var el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML='&#127979; '+sc.replace(/</g,'&lt;')+' &middot; powered by Prime Scholars LT'}});
 }catch(e){}}
 function resumeLast(){try{
- pickExam('JAMB');
+ var all=[];try{all=JSON.parse(localStorage.getItem('sun_prog')||'[]')}catch(e){}
+ var ex='JAMB';if(all.length){var m={'jamb':'JAMB','waec':'WAEC','neco':'NECO'};ex=m[String(all[all.length-1].e||'').toLowerCase()]||'JAMB'}
+ pickExam(ex);
 }catch(e){show('home')}}
 function paintResume(){try{
  var el=document.getElementById('resumeRow');if(!el)return;
