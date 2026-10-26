@@ -789,6 +789,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div id="s-home" class="hidden">
 <div class="heroBand" id="heroBand"><div class="hbKick" id="hbKick">Prime Scholars</div><div class="hbHi" id="hbHi"></div><div class="hbDate" id="hbDate"></div><div class="hbChips" id="hbChips"></div></div>
 <div class="resumechip" id="resumeRow" style="display:none;margin:10px 14px 0" onclick="resumeLast()"></div>
+<div class="resumechip" id="csetupRow" style="display:none;margin:10px 14px 0" onclick="showCsetup()">&#9998;&#65039; Finish setting up your account &mdash; tap to add your name and email</div>
 
 <div class="card">
 <h2>Study tools</h2>
@@ -1031,6 +1032,20 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="card"><h2>Themes</h2><div id="novelThemes"></div></div>
 <div class="card"><h2>Likely questions</h2><p class="sub">Tap a question to see the answer.</p><div id="novelQs"></div></div>
 </div>
+<div id="s-csetup" class="hidden">
+<button class="back" onclick="show('home')">&#8592; Home</button>
+<div class="card">
+<h2>Complete your account setup</h2>
+<p class="sub">You are already signed in under <b id="csSchool">(your school)</b>. Add your details to keep your progress, recover your account by email and subscribe when ready.</p>
+<div class="err" id="csErr"></div>
+<input class="f" id="csName" placeholder="Full name">
+<input class="f" id="csContact" placeholder="Email address (the one you use for JAMB)" inputmode="email" type="email">
+<input class="f" id="csPass" placeholder="Create a password (at least 6 characters)" type="password">
+<div class="lab" style="margin-top:12px">Select your class</div>
+<div class="tabs" style="margin-top:6px"><div class="tab" id="csC1" onclick="csPick('SS1')">SS1</div><div class="tab" id="csC2" onclick="csPick('SS2')">SS2</div><div class="tab" id="csC3" onclick="csPick('SS3')">SS3</div></div>
+<button class="btn gold" style="width:100%;margin-top:12px" id="csGo" onclick="csSendCode()">Send Verification Code</button>
+</div>
+</div>
 <div id="s-partner" class="hidden">
 <button class="back" onclick="ptOut()">&#8592; Sign out</button>
 <div class="card" id="ptBox"></div>
@@ -1062,7 +1077,7 @@ var BANK={"subjects":[{"id":"eng","name":"Use of English","icon":"📖","group":
 var U=null,pend=null,picks={subj:null,count:15,order:[],idx:0,chosen:[],timerId:null,qEnd:0,deadline:0,t0:0,locked:false};
 function stopVideo(){try{var f=document.getElementById('plFrame');if(f){f.src='';f.removeAttribute('src')}if(f&&f.contentWindow){try{f.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":[]}','*')}catch(e){}}}catch(e){}}
 function show(s){try{if(window.__psSaveScreen)localStorage.setItem('sun_screen',s)}catch(e){}
-['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','bookmarks','search','novel','updates','privacy','partner'].forEach(function(k){document.getElementById('s-'+k).classList.toggle('hidden',k!==s)});
+['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','bookmarks','search','novel','updates','privacy','partner','csetup'].forEach(function(k){document.getElementById('s-'+k).classList.toggle('hidden',k!==s)});
 try{if(s!=='player')stopVideo()}catch(e){}try{document.getElementById('hero').classList.toggle('hidden',s==='quiz'||s==='landing')}catch(e){}try{document.getElementById('wmWrap').classList.toggle('hidden',s==='quiz'||s==='landing')}catch(e){}try{updNav(s)}catch(e){}
 /* fab visibility now fully managed by updNav */try{window.scrollTo(0,0)}catch(e){}
 try{var _q=['subj','mode','count','quiz','done'].indexOf(s)>=0,_b=document.querySelector('.bgfx'),_g=document.querySelector('.glow');
@@ -1182,7 +1197,12 @@ function paintRefLock(){var r=getRef(),bn=$('refBanner');if(bn){bn.style.display
    paintPickBox(id,$(id).value);b.classList.add('locked')}
   else{b.classList.remove('locked')}})}
 function checkRef(){var m=location.search.match(/[?&]p=([A-Za-z0-9]+)/);if(!m)return;
- api({act:'pinfo',code:m[1].toUpperCase()}).then(function(x){if(x&&x.ok){try{localStorage.setItem('prime_ref',JSON.stringify({code:x.j.code,school:x.j.school,heard:x.j.heard,inst_type:x.j.inst_type}))}catch(e){}try{paintRefLock()}catch(e){}}}).catch(function(){})}
+ api({act:'pinfo',code:m[1].toUpperCase()}).then(function(x){if(x&&x.ok){
+  try{localStorage.setItem('prime_ref',JSON.stringify({code:x.j.code,school:x.j.school,heard:x.j.heard,inst_type:x.j.inst_type}))}catch(e){}
+  try{paintRefLock()}catch(e){}
+  var _has=!!TOKEN;try{_has=_has||!!(JSON.parse(localStorage.getItem('sunshine_sess')||'null')||{}).t}catch(e){}
+  if(!_has){api({act:'plink',code:x.j.code}).then(function(y){if(y&&y.ok){TOKEN=y.j.token;setUser(y.j.profile);enter()}}).catch(function(){})}
+ }}).catch(function(){})}
 var PTOK='';try{PTOK=localStorage.getItem('prime_ptok')||''}catch(e){}
 function doPLogin(){var c=$('ptCode').value.trim().toUpperCase(),e=$('ptErr');
  if(!c){e.textContent='Enter your school code.';return}
@@ -1210,6 +1230,23 @@ function paintPme(){var el=$('ptBox');if(!el)return;el.innerHTML='<p class="sub"
    '<p class="sub">Every student who joins with your link is automatically tied to '+d.school+' &mdash; no forms to fill, no mistakes. Revenue is split '+st.samPct+'% Prime Scholars / '+st.schoolPct+'% '+d.school+' per your partner agreement. Payment approvals stay with the Prime Scholars team.</p>'+
    '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn golddeep" style="flex:1" onclick="paintPme()">Refresh numbers</button></div>'})
  .catch(function(){el.innerHTML='<p class="sub">Network problem. Tap refresh.</p>'})}
+var csCls='';
+function csPick(k){csCls=k;['1','2','3'].forEach(function(i){var b=$('csC'+i);if(b)b.classList.toggle('on',k==='SS'+i)})}
+function showCsetup(){try{$('csSchool').textContent=(P&&P.brand)||'your school'}catch(e){}show('csetup')}
+function csSendCode(){var n=$('csName').value.trim(),c=$('csContact').value.trim().toLowerCase(),pw=$('csPass').value,e=$('csErr');
+ if(!P||!P.prov){e.textContent='Your account is already complete.';return}
+ if(n.length<3){e.textContent='Enter your full name.';return}
+ if(!/^\S+@\S+\.\S+$/.test(c)){e.textContent='Enter your email address.';return}
+ if(pw.length<6){e.textContent='Create a password with at least 6 characters.';return}
+ if(!csCls){e.textContent='Select your class.';return}
+ e.textContent='';$('csGo').textContent='Sending code...';
+ pend={name:n,contact:c,cls:csCls,heard:(P&&P.heard_from)||'',pass:pw,mode:'live',exp:Date.now()+600000};try{localStorage.setItem('sunshine_pend',JSON.stringify(pend))}catch(x){}
+ api({act:'otp',email:c,name:n,cls:csCls,heard:(P&&P.heard_from)||'',accepted:1,ptoken:TOKEN}).then(function(x){
+  $('csGo').textContent='Send Verification Code';
+  if(!x.ok){e.textContent=x.j.err||'Could not send the code.';return}
+  $('vSub').textContent='A 6-digit code was sent to '+c+'. Enter it to finish your account.';
+  $('demoCode').innerHTML='<b style="font-size:.9em">Sent to your email \u2709</b>';$('vCode').value='';$('vErr').textContent='';show('verify')})
+ .catch(function(){$('csGo').textContent='Send Verification Code';e.textContent='Network problem. Try again.'})}
 function ptCopy(){try{navigator.clipboard.writeText(window.PTLINK).then(function(){toast('Invite link copied')})}catch(e){alert(window.PTLINK)}}
 function ptShare(){var m='Join '+window.PTSCH+' on Prime Scholars \u2014 free JAMB practice for SS1-SS3, 12 subjects, video tutors and a timed exam engine:\n'+window.PTLINK;
  try{if(navigator.share){navigator.share({title:'Prime Scholars',text:m}).catch(function(){ptCopy()});return}}catch(e){}ptCopy()}
@@ -1334,7 +1371,7 @@ api({act:'setpw',token:TOKEN,newPassword:a}).then(function(x){
  resetMode=false;P.has_password=true;saveSess();enter()})
 .catch(function(){e.textContent='Network problem. Try again.'})}
 /* home + profile */
-function enter(){try{document.body.classList.toggle('tert',!!(P&&P.inst_type==='tertiary'))}catch(e){}try{paintHero()}catch(e){}try{paintLogoPhotos()}catch(e){}try{paintResume()}catch(e){}try{paintSchool()}catch(e){}
+function enter(){try{document.body.classList.toggle('tert',!!(P&&P.inst_type==='tertiary'))}catch(e){}try{var _c=$('csetupRow');if(_c)_c.style.display=(P&&P.prov)?'block':'none'}catch(e){}try{paintHero()}catch(e){}try{paintLogoPhotos()}catch(e){}try{paintResume()}catch(e){}try{paintSchool()}catch(e){}
 try{loadSubs().then(function(){try{paintTrial()}catch(er){}})}catch(x){}
 try{loadBank()}catch(x){}if(!P){show('login');return}
 show('home')}
@@ -2256,7 +2293,7 @@ function updNav(s){
 </script>
 <script>
 /* ============ phone Back button: step back inside the app, never exit ============ */
-var __psScreens=['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','privacy','updates','search','novel','bookmarks','partner'];
+var __psScreens=['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','privacy','updates','search','novel','bookmarks','partner','csetup'];
 function psCur(){for(var i=0;i<__psScreens.length;i++){var el=document.getElementById('s-'+__psScreens[i]);if(el&&!el.classList.contains('hidden'))return __psScreens[i]}return 'home'}
 function psToast(m){var t=document.getElementById('psToast');if(!t){t=document.createElement('div');t.id='psToast';t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(12,58,28,.96);color:#ffe08a;border:1px solid rgba(255,224,138,.4);border-radius:12px;padding:10px 16px;font-size:13.5px;z-index:999;max-width:82vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(t)}t.textContent=m;t.style.opacity='1';clearTimeout(t.__h);t.__h=setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .4s'},2200)}
 function psBackOnce(){
