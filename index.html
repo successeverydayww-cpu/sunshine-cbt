@@ -390,6 +390,11 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 .pickbox .pv{font-weight:600;color:var(--ink)}
 .pickbox.ph .pv{color:#9aa89b;font-weight:400}
 .pickbox .chev{color:#7c8a7c;font-size:.85rem;margin-left:8px}
+#pinModal{position:fixed;inset:0;z-index:998;background:linear-gradient(180deg,rgba(26,60,47,.78),rgba(45,90,70,.78));backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:20px}
+#pinModal.hidden{display:none}
+#pinModal:not(.hidden){display:flex}
+#pinModal .clsm input{width:100%;border:2px solid #dfe7dc;border-radius:12px;padding:13px;font-size:1.3rem;text-align:center;letter-spacing:8px;font-family:inherit}
+#pinModal .clsm input:focus{outline:none;border-color:var(--g2)}
 #clsModal{position:fixed;inset:0;z-index:998;background:linear-gradient(180deg,rgba(26,60,47,.78),rgba(45,90,70,.78));backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:20px}
 #clsModal.hidden{display:none}
 #clsModal:not(.hidden){display:flex}
@@ -1033,6 +1038,16 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="card"><h2>Themes</h2><div id="novelThemes"></div></div>
 <div class="card"><h2>Likely questions</h2><p class="sub">Tap a question to see the answer.</p><div id="novelQs"></div></div>
 </div>
+<div id="pinModal" class="hidden" onclick="if(event.target===this)closePinModal()">
+<div class="clsm">
+<h3>&#127979; School dashboard</h3>
+<p class="clssub">Enter your secret school PIN to open the principal dashboard. Only the principal has this PIN.</p>
+<input id="pinIn" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" autocomplete="off" onkeydown="if(event.key==='Enter')ptDashGo()">
+<div class="err" id="pinErr" style="margin:8px 0 4px"></div>
+<button class="btn" style="margin-top:10px" id="pinGo" onclick="ptDashGo()">Open dashboard</button>
+<button class="btn ghost" style="margin-top:8px" onclick="closePinModal()">Cancel</button>
+</div>
+</div>
 <div id="s-csetup" class="hidden">
 <button class="back" onclick="show('home')">&#8592; Home</button>
 <div class="card">
@@ -1048,7 +1063,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 </div>
 </div>
 <div id="s-partner" class="hidden">
-<button class="back" onclick="ptOut()">&#8592; Sign out</button>
+<button class="back" onclick="ptBack()">&#8592; Back</button>
 <div class="card" id="ptBox"></div>
 </div>
 <div id="s-updates" class="hidden">
@@ -1214,6 +1229,18 @@ function doPLogin(){var c=$('ptCode').value.trim().toUpperCase(),pn=$('ptPin').v
   PTOK=x.j.token;try{localStorage.setItem('prime_ptok',PTOK)}catch(q){};openPartner()})
  .catch(function(){$('btnPt').textContent='Open my school page';e.textContent='Network problem. Try again.'})}
 function openPartner(){show('partner');paintPme()}
+function openPtDash(){var m=document.getElementById('pinModal');if(!m)return;$('pinIn').value='';$('pinErr').textContent='';$('pinGo').textContent='Open dashboard';m.classList.remove('hidden');try{setTimeout(function(){try{$('pinIn').focus()}catch(e){}},150)}catch(e){}}
+function closePinModal(){var m=document.getElementById('pinModal');if(m)m.classList.add('hidden')}
+function ptDashGo(){var pn=$('pinIn').value.trim(),e=$('pinErr');
+ if(!pn){e.textContent='Enter your school PIN.';return}
+ e.textContent='';$('pinGo').textContent='Opening...';
+ api({act:'plogin',code:(P&&P.pcode)||'',pin:pn}).then(function(x){
+  $('pinGo').textContent='Open dashboard';
+  if(!x.ok){e.textContent=x.j.err||'The PIN is not correct.';return}
+  PTOK=x.j.token;try{localStorage.setItem('prime_ptok',PTOK)}catch(q){}
+  closePinModal();show('partner');paintPme()})
+ .catch(function(){$('pinGo').textContent='Open dashboard';e.textContent='Network problem. Try again.'})}
+function ptBack(){if(TOKEN&&P){show('home')}else{ptOut()}}
 function ptOut(){PTOK='';try{localStorage.removeItem('prime_ptok')}catch(e){}show('login');try{loginMode('pt')}catch(e){}}
 function paintPme(){var el=$('ptBox');if(!el)return;el.innerHTML='<p class="sub">Loading your school numbers...</p>';
  api({act:'pme',token:PTOK||''}).then(function(x){
@@ -1714,6 +1741,7 @@ function toggleWM(ev){try{if(ev)ev.stopPropagation()}catch(e){}var m=document.ge
  if(!m.classList.contains("hidden")){m.classList.add("hidden");return}
  var th=curTheme();
  var items=[['&#128100; My profile',function(){openProfile()}],['&#128200; My progress',function(){openProgress()}],['&#128176; Subscriptions',function(){openSubs()}],['&#128203; Payments history',function(){openHistory()}],['&#127891; Video tutors',function(){openTutors('math')}],['&#127748; Change theme ('+(th==='white'?'white background':'green background')+')',function(){cycleTheme()}],['&#128172; Invite friends',function(){inviteFriends()}]];
+ if(P&&P.pcode)items.push(['&#127979; School dashboard',function(){openPtDash()}]);
  if(isBoss())items.push(['&#128202; Admin dashboard',function(){openAdmin()}]);
  items.push(['&#128682; Sign out',function(){logout()}]);
  WM_ACTS=items.map(function(x){return x[1]});
