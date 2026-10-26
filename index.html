@@ -1973,7 +1973,7 @@ var ty=document.createElement('div');ty.className='msg bot';ty.id='ty'+id;ty.tex
 var log=document.getElementById('clog');log.appendChild(ty);log.scrollTop=1e9;
 var ctl=null;try{ctl=new AbortController()}catch(e){}
 var tm=null;if(ctl)tm=setTimeout(function(){try{ctl.abort()}catch(e){}},25000);
-fetch('https://sunshine-cbt.successeverydayww-cpu.workers.dev/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:t,ctx:AGQ?{q:AGQ.q,o:AGQ.o,a:AGQ.o[AGQ.a],e:AGQ.e,s:AGQ.s}:null}),signal:ctl?ctl.signal:undefined})
+fetch('https://prime-scholars-lt.successeverydayww-cpu.workers.dev/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:t,ctx:AGQ?{q:AGQ.q,o:AGQ.o,a:AGQ.o[AGQ.a],e:AGQ.e,s:AGQ.s}:null}),signal:ctl?ctl.signal:undefined})
 .then(function(r){if(!r.ok)throw 0;return r.json()})
 .then(function(j){if(id!==LIVESEQ)return;var e=document.getElementById('ty'+id);if(e&&e.parentNode)e.parentNode.removeChild(e);
 if(j&&j.reply){addMsg(j.reply,'bot');speak(j.reply)}else{localAnswer(t)}})
