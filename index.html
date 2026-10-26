@@ -47,6 +47,7 @@ input.f:focus{outline:none;border-color:var(--g2)}
 .hch h3{color:var(--g1);font-family:var(--fd);margin-bottom:2px}
 .vrf{display:inline-block;font-size:.68rem;font-weight:700;color:#0c3a1c;background:#e2f5e8;border:1px solid #2e8b4a;border-radius:999px;padding:2px 9px;margin:6px 0 2px}
 body.twhite{background:#fff}
+body.twhite .bgfx,body.twhite .glow,body.twhite .aurora{display:none}
 body.tgreen{background:linear-gradient(180deg,#123d21,#0c3a1c 45%,#08240f)}
 body.tgreen .card{box-shadow:0 8px 26px rgba(0,0,0,.5)}
 body.tgreen .back{color:#fff}
@@ -711,7 +712,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="sub" style="margin-top:6px">One exam decides your admission. Train with 12,000 questions across 12 subjects, a JAMB-style calculator, the full guide to <i>The Lekki Headmaster</i>, and a 60-question Mini Mock that feels exactly like the real hall.</p>
 <div class="lchips"><span class="lchip">12,000 questions</span><span class="lchip">12 subjects</span><span class="lchip">JAMB calculator</span><span class="lchip">Novel guide</span><span class="lchip">Mini Mock</span></div>
 <div class="lprice"><span>&#8358;2,000 / 3 months</span><span>&#8358;8,000 lifetime</span></div>
-<button class="btn gold" style="width:100%;margin-top:6px" onclick="pickExam('JAMB')">Get Started with JAMB</button>
+<button class="btn solid" style="width:100%;margin-top:6px" onclick="pickExam('JAMB')">Get Started with JAMB</button>
 </div>
 <div class="card hch">
 <div class="hchIco">&#128218;</div>
@@ -719,7 +720,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="sub" style="margin-top:6px">Your WASSCE result follows you for life. Practise objective papers the way they are marked &mdash; instant grading, full step-by-step explanations, and video classes that fix your weak topics after every test.</p>
 <div class="lchips"><span class="lchip">12,000 questions</span><span class="lchip">Instant marking</span><span class="lchip">Video classes</span><span class="lchip">Weak-topic engine</span></div>
 <div class="lprice"><span>&#8358;2,000 / 3 months</span><span>&#8358;8,000 lifetime</span></div>
-<button class="btn gold" style="width:100%;margin-top:6px" onclick="pickExam('WAEC')">Get Started with WAEC</button>
+<button class="btn solid" style="width:100%;margin-top:6px" onclick="pickExam('WAEC')">Get Started with WAEC</button>
 </div>
 <div class="card hch">
 <div class="hchIco">&#127891;</div>
@@ -727,7 +728,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="sub" style="margin-top:6px">Your second chance at a strong SSCE result &mdash; and the easiest place to raise your grades. Same 12 subjects, same instant marking, same deep explanations, so you keep improving after WAEC.</p>
 <div class="lchips"><span class="lchip">12,000 questions</span><span class="lchip">12 subjects</span><span class="lchip">Progress tracking</span><span class="lchip">Works offline</span></div>
 <div class="lprice"><span>&#8358;2,000 / 3 months</span><span>&#8358;8,000 lifetime</span></div>
-<button class="btn gold" style="width:100%;margin-top:6px" onclick="pickExam('NECO')">Get Started with NECO</button>
+<button class="btn solid" style="width:100%;margin-top:6px" onclick="pickExam('NECO')">Get Started with NECO</button>
 </div>
 <div class="card hch">
 <div class="hchIco">&#127979;</div>
@@ -735,12 +736,11 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="sub" style="margin-top:6px">Pick from 72 universities and 4,600+ courses. We show the exact JAMB subject combination for your course and set up mixed practice on those subjects &mdash; so you walk into your school's Post-UTME already knowing its pattern.</p>
 <div class="lchips"><span class="lchip">72 universities</span><span class="lchip">4,600+ courses</span><span class="lchip">Subject combinations</span><span class="lchip">Mixed practice</span></div>
 <div class="lprice"><span>&#8358;2,000 / 3 months</span><span>&#8358;8,000 lifetime</span></div>
-<button class="btn gold" style="width:100%;margin-top:6px" onclick="openUtme()">Get Started with Post-UTME</button>
+<button class="btn solid" style="width:100%;margin-top:6px" onclick="openUtme()">Get Started with Post-UTME</button>
 </div>
 <div class="card">
 <p class="sub" id="trialNote" style="display:none;color:#f7d774;font-weight:700"></p>
 <div style="text-align:center"><button class="btn golddeep" onclick="openSubs()">&#128176; Subscribe</button></div>
-<div style="text-align:center;margin-top:10px"><button class="btn solid" onclick="inviteFriends()">&#128172; Invite friends</button></div>
 <p class="sub" style="text-align:center;margin:10px 0 0">Works offline once loaded &middot; <b>v20.1</b></p>
 </div>
 <div class="card">
@@ -1504,15 +1504,15 @@ function paintLogoPhotos(){try{[1,2].forEach(function(n){var img=document.getEle
  if(P&&P.photo){img.setAttribute('href',P.photo);img.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',P.photo);pic.style.display='';lap.style.display='none';if(base)base.style.display='none'}
  else{pic.style.display='none';lap.style.display='';if(base)base.style.display=''}})}catch(e){}}
 var WM_ACTS=[];
-function curTheme(){try{return localStorage.getItem('prime_theme')||'cream'}catch(e){return 'cream'}}
-function applyTheme(t){document.body.classList.remove('twhite','tgreen');if(t==='white')document.body.classList.add('twhite');if(t==='green')document.body.classList.add('tgreen')}
-function setTheme(t){try{localStorage.setItem('prime_theme',t)}catch(e){}applyTheme(t);try{toast('Theme: '+(t==='white'?'white background':(t==='green'?'green background':'default')))}catch(e){}}
-function cycleTheme(){var t=curTheme();setTheme(t==='cream'?'white':(t==='white'?'green':'cream'))}
+function curTheme(){try{var v=localStorage.getItem('prime_theme');return v==='white'?'white':'green'}catch(e){return 'green'}}
+function applyTheme(t){document.body.classList.remove('twhite','tgreen');if(t==='white')document.body.classList.add('twhite')}
+function setTheme(t){try{localStorage.setItem('prime_theme',t)}catch(e){}applyTheme(t);try{toast('Theme: '+(t==='white'?'white background':'green background'))}catch(e){}}
+function cycleTheme(){setTheme(curTheme()==='white'?'green':'white')}
 try{applyTheme(curTheme())}catch(e){}
 function toggleWM(ev){try{if(ev)ev.stopPropagation()}catch(e){}var m=document.getElementById("wMenu");if(!m)return;
  if(!m.classList.contains("hidden")){m.classList.add("hidden");return}
  var th=curTheme();
- var items=[['&#128100; My profile',function(){openProfile()}],['&#128200; My progress',function(){openProgress()}],['&#128176; Subscriptions',function(){openSubs()}],['&#128203; Payments history',function(){openHistory()}],['&#127891; Video tutors',function(){openTutors('math')}],['&#127748; Change theme ('+(th==='white'?'white background':(th==='green'?'green background':'default'))+')',function(){cycleTheme()}]];
+ var items=[['&#128100; My profile',function(){openProfile()}],['&#128200; My progress',function(){openProgress()}],['&#128176; Subscriptions',function(){openSubs()}],['&#128203; Payments history',function(){openHistory()}],['&#127891; Video tutors',function(){openTutors('math')}],['&#127748; Change theme ('+(th==='white'?'white background':'green background')+')',function(){cycleTheme()}],['&#128172; Invite friends',function(){inviteFriends()}]];
  if(isBoss())items.push(['&#128202; Admin dashboard',function(){openAdmin()}]);
  items.push(['&#128682; Sign out',function(){logout()}]);
  WM_ACTS=items.map(function(x){return x[1]});
