@@ -582,8 +582,9 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="tabs"><div class="tab on" id="tabIn" onclick="loginMode('in')">Sign in</div><div class="tab" id="tabNew" onclick="loginMode('new')">First time?</div><div class="tab" id="tabPt" onclick="loginMode('pt')">School partner</div></div>
 <div id="boxPt" class="hidden">
 <h2>School partner sign in</h2>
-<p class="sub">Principals and partner school admins: enter the school code you were given. No email needed.</p>
+<p class="sub">Principals and partner school admins: enter your school code and your secret PIN. Students do not need this &mdash; they use the school invite link.</p>
 <input class="f" id="ptCode" placeholder="School code e.g. K7QM4XRB" style="text-transform:uppercase" autocomplete="off">
+<input class="f" id="ptPin" placeholder="Secret PIN" inputmode="numeric" type="password" maxlength="8" autocomplete="off" style="letter-spacing:6px;text-align:center;font-size:1.15rem">
 <div class="err" id="ptErr"></div>
 <button class="btn" id="btnPt" onclick="doPLogin()">Open my school page</button>
 </div>
@@ -1128,7 +1129,7 @@ function playTopic(id){
 }
 /* ---- admin + danger zone + invite ---- */
 function adPtnrMsg(m,bad){$('adPtnrOut').innerHTML='<p class="sub"'+(bad?' style="color:#b00"':'')+'>'+m+'</p>'}
-function adCopyP(code){var l=location.origin+location.pathname+'?p='+code;var m='Prime Scholars school code: '+code+'\nInvite link: '+l;try{navigator.clipboard.writeText(m).then(function(){toast('Code + link copied')})}catch(e){alert(m)}}
+function adCopyP(code,pin){var l=location.origin+location.pathname+'?p='+code;var m='Prime Scholars partner school\nSchool code: '+code+'\nSecret PIN (for the principal only): '+pin+'\nStudent invite link: '+l+'\nStudents join automatically through the invite link. The principal opens the School partner tab with the code + PIN.';try{navigator.clipboard.writeText(m).then(function(){toast('Code + PIN + link copied')})}catch(e){alert(m)}}
 function adMkPartner(){var sc=$('aSchool').value,st=$('aState').value,ci=$('aCity').value;
  if(!st){adPtnrMsg('Select the state first.',true);return}
  if(!ci){adPtnrMsg('Select the city / LGA.',true);return}
@@ -1139,11 +1140,11 @@ function adMkPartner(){var sc=$('aSchool').value,st=$('aState').value,ci=$('aCit
  api({act:'mkpartner',token:TOKEN,school:sc,heard:heard,inst_type:ity}).then(function(x){$('adPtnrGo').textContent='Generate school code';
   if(!x.ok){adPtnrMsg(x.j.err||'Could not generate.',true);return}
   var l=location.origin+location.pathname+'?p='+x.j.code;
-  $('adPtnrOut').innerHTML='<div class="txnline"><b>'+x.j.school+'</b>'+(x.j.existing?' (code already existed \u2014 the school keeps its same link)':'')+'<br>Code: <b style="font-size:1.25rem;color:#f5b70a">'+x.j.code+'</b><br>Invite link: '+l+'<br><button class="btn solid" style="margin-top:6px" onclick="adCopyP(\''+x.j.code+'\')">Copy code + link for the principal</button></div>';
+  $('adPtnrOut').innerHTML='<div class="txnline"><b>'+x.j.school+'</b>'+(x.j.existing?' (existing partner \u2014 same link)':'')+'<br>Code: <b style="font-size:1.25rem;color:#f5b70a">'+x.j.code+'</b> &nbsp; PIN: <b style="font-size:1.25rem;color:#f5b70a">'+(x.j.pin||'\u2014')+'</b><br>Invite link (for students): '+l+'<br><button class="btn solid" style="margin-top:6px" onclick="adCopyP(\''+x.j.code+'\','+x.j.pin+')">Copy code + PIN + link for the principal</button></div>';
   adLoadPartners()})
  .catch(function(){$('adPtnrGo').textContent='Generate school code';adPtnrMsg('Network problem. Try again.',true)})}
 function adLoadPartners(){api({act:'partners',token:TOKEN}).then(function(x){if(!x.ok)return;var ps=x.j.partners||[];
- $('adPtnrList').innerHTML=ps.length?'<div class="pickgrp" style="margin:8px 0 2px">Existing partner codes</div>'+ps.map(function(p){return '<div class="txnline"><b>'+p.school+'</b>'+(p.active?'':' \u2014 REVOKED')+'<br>Code <b>'+p.code+'</b><br><small>'+p.heard+'</small><br>'+(p.active?'<button class="btn golddeep" style="margin-top:4px;padding:6px 12px;font-size:.75rem" onclick="adRmP(\''+p.id+'\')">Revoke</button>':'')+'</div>'}).join(''):''}).catch(function(){})}
+ $('adPtnrList').innerHTML=ps.length?'<div class="pickgrp" style="margin:8px 0 2px">Existing partner codes</div>'+ps.map(function(p){return '<div class="txnline"><b>'+p.school+'</b>'+(p.active?'':' \u2014 REVOKED')+'<br>Code <b>'+p.code+'</b> &middot; PIN <b>'+(p.pin||'\u2014')+'</b><br><small>'+p.heard+'</small><br>'+(p.active?'<button class="btn golddeep" style="margin-top:4px;padding:6px 12px;font-size:.75rem" onclick="adRmP(\''+p.id+'\')">Revoke</button>':'')+'</div>'}).join(''):''}).catch(function(){})}
 function adRmP(id){api({act:'rmpartner',token:TOKEN,id:id}).then(function(x){if(x.ok){adLoadPartners()}}).catch(function(){})}
 function openAdmin(){show('admin');$('adStats').innerHTML='<p class="sub">Loading...</p>';var pb=$('adPayRows');if(pb)pb.innerHTML='';try{adLoadPartners()}catch(e){}
  api({act:'admin',token:TOKEN}).then(function(x){
@@ -1204,10 +1205,11 @@ function checkRef(){var m=location.search.match(/[?&]p=([A-Za-z0-9]+)/);if(!m)re
   if(!_has){api({act:'plink',code:x.j.code}).then(function(y){if(y&&y.ok){TOKEN=y.j.token;setUser(y.j.profile);enter()}}).catch(function(){})}
  }}).catch(function(){})}
 var PTOK='';try{PTOK=localStorage.getItem('prime_ptok')||''}catch(e){}
-function doPLogin(){var c=$('ptCode').value.trim().toUpperCase(),e=$('ptErr');
+function doPLogin(){var c=$('ptCode').value.trim().toUpperCase(),pn=$('ptPin').value.trim(),e=$('ptErr');
  if(!c){e.textContent='Enter your school code.';return}
+ if(!pn){e.textContent='Enter your PIN.';return}
  e.textContent='';$('btnPt').textContent='Checking...';
- api({act:'plogin',code:c}).then(function(x){$('btnPt').textContent='Open my school page';
+ api({act:'plogin',code:c,pin:pn}).then(function(x){$('btnPt').textContent='Open my school page';
   if(!x.ok){e.textContent=x.j.err||'Could not sign in.';return}
   PTOK=x.j.token;try{localStorage.setItem('prime_ptok',PTOK)}catch(q){};openPartner()})
  .catch(function(){$('btnPt').textContent='Open my school page';e.textContent='Network problem. Try again.'})}
