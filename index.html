@@ -1258,7 +1258,7 @@ function paintPme(){var el=$('ptBox');if(!el)return;el.innerHTML='<p class="sub"
    '<div class="txnline"><b>Your school\u2019s share ('+st.schoolPct+'%)</b><br>&#8358;'+Number(st.schoolShare||0).toLocaleString()+'</div>'+
    '<p class="sub">Every student who joins with your link is automatically tied to '+d.school+' &mdash; no forms to fill, no mistakes. Revenue is split '+st.samPct+'% Prime Scholars / '+st.schoolPct+'% '+d.school+' per your partner agreement. Payment approvals stay with the Prime Scholars team.</p>'+
    '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn golddeep" style="flex:1" onclick="paintPme()">Refresh numbers</button></div>'})
- .catch(function(){el.innerHTML='<p class="sub">Network problem. Tap refresh.</p>'})}
+ .catch(function(){el.innerHTML='<p class="sub">Network is slow or disconnected. Check your connection and try again.</p><button class="btn" onclick="paintPme()">Try again</button>'})}
 var csCls='';
 function csPick(k){csCls=k;['1','2','3'].forEach(function(i){var b=$('csC'+i);if(b)b.classList.toggle('on',k==='SS'+i)})}
 function showCsetup(){try{$('csSchool').textContent=(P&&P.brand)||'your school'}catch(e){}show('csetup')}
@@ -1287,7 +1287,11 @@ function inviteFriends(){
 /* ---- ACCOUNT backend (sunshineAuth) ---- */
 var API='https://prime-backend.successeverydayww-cpu.workers.dev/';
 var TOKEN='',P=null,resetMode=false;
-function api(body){return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})}
+function api(body){var _ac=(typeof AbortController!=='undefined')?new AbortController():null;
+ var _tm=_ac?setTimeout(function(){try{_ac.abort()}catch(e){}},25000):null;
+ return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:_ac?_ac.signal:undefined})
+  .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+  .finally(function(){if(_tm)clearTimeout(_tm)})}
 function streakVal(){try{return (JSON.parse(localStorage.getItem('sun_streak')||'{}')||{}).c||0}catch(e){return 0}}
 function $(id){return document.getElementById(id)}
 initGoogle();
