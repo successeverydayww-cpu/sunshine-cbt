@@ -243,6 +243,10 @@ select.f{background:#fff}
 .bnav button.on .bi{filter:none}
 body{padding-bottom:0}
 body.hasnav{padding-bottom:64px}
+/* partner / white-label support */
+.pickbox.locked{pointer-events:none;opacity:.95}
+.pickbox.locked .chev{display:none}
+body.tert #hchJ,body.tert #hchW,body.tert #hchN,body.tert #mockCard,body.tert #toolNovel,body.tert #bnTutors{display:none!important}
 
 .inp{width:100%;box-sizing:border-box;padding:11px 13px;border-radius:11px;border:1px solid #2e6b3f;background:#0a3218;color:#fff;font-size:15px;margin:8px 0 4px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:6px 0 2px;-webkit-overflow-scrolling:touch}
@@ -575,7 +579,14 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div id="s-login">
 <div class="schstrip" id="schoolStrip2" style="margin:14px 14px 0"></div>
 <div class="card">
-<div class="tabs"><div class="tab on" id="tabIn" onclick="loginMode('in')">Sign in</div><div class="tab" id="tabNew" onclick="loginMode('new')">First time?</div></div>
+<div class="tabs"><div class="tab on" id="tabIn" onclick="loginMode('in')">Sign in</div><div class="tab" id="tabNew" onclick="loginMode('new')">First time?</div><div class="tab" id="tabPt" onclick="loginMode('pt')">School partner</div></div>
+<div id="boxPt" class="hidden">
+<h2>School partner sign in</h2>
+<p class="sub">Principals and partner school admins: enter the school code you were given. No email needed.</p>
+<input class="f" id="ptCode" placeholder="School code e.g. K7QM4XRB" style="text-transform:uppercase" autocomplete="off">
+<div class="err" id="ptErr"></div>
+<button class="btn" id="btnPt" onclick="doPLogin()">Open my school page</button>
+</div>
 <div id="boxIn">
 <h2>Student Sign in</h2>
 <p class="sub">Use your email and your own password.</p>
@@ -593,6 +604,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <p class="sub" style="text-align:center">Questions? <a href="mailto:successeverydayww@gmail.com?subject=Hello%20from%20Prime%20Scholars" style="color:var(--g2);text-decoration:underline">Email us</a> &middot; <a href="https://wa.me/19312715621?text=Hello%20from%20Prime%20Scholars%20app" target="_blank" rel="noopener" style="color:var(--g2);text-decoration:underline">Chat with us on WhatsApp</a> &middot; <a href="https://wa.me/2349132352500?text=Hello%2C%20I%20am%20messaging%20from%20the%20Prime%20Scholars%20app" target="_blank" rel="noopener" style="text-decoration:underline">Message the team on WhatsApp</a></p>
 </div>
 <div id="boxNew" class="hidden">
+<div class="err" id="refBanner" style="display:none;background:#eaf4e4;border-color:#b7d8b0;color:#0c3a1c;text-align:center"></div>
 <h2>Create your student account</h2>
 <p class="sub">We email a 6-digit code to confirm it is you.</p>
 <input class="f" id="lName" placeholder="Full name">
@@ -705,6 +717,20 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div id="adPayBox" style="display:none"></div>
 </div>
 <div class="card">
+<h3>&#127979; Partner school codes</h3>
+<p class="sub">Pick the school, generate its code, then send the code and the invite link to the principal. Every student who joins via that link is automatically tied to the school.</p>
+<div class="pickgrp" style="margin:8px 0 2px">State</div>
+<div class="pickbox ph" id="aStateBox" onclick="openPick('aState')"><span class="pv">Select state</span><span class="chev">&#9662;</span></div>
+<input type="hidden" id="aState"><input type="hidden" id="aCity"><input type="hidden" id="aSchool">
+<div class="pickgrp" style="margin:8px 0 2px">City / LGA</div>
+<div class="pickbox ph" id="aCityBox" onclick="openPick('aCity')"><span class="pv">Select city / LGA</span><span class="chev">&#9662;</span></div>
+<div class="pickgrp" style="margin:8px 0 2px">School</div>
+<div class="pickbox ph" id="aSchoolBox" onclick="openPick('aSchool')"><span class="pv">Select your school or institution</span><span class="chev">&#9662;</span></div>
+<button class="btn gold" style="width:100%;margin-top:10px" id="adPtnrGo" onclick="adMkPartner()">Generate school code</button>
+<div id="adPtnrOut" style="margin-top:10px"></div>
+<div id="adPtnrList" style="margin-top:6px"></div>
+</div>
+<div class="card">
 <h3>Admins</h3>
 <p class="sub">Make an admin: the person must first sign up and verify their email in the app.</p>
 <div style="display:flex;gap:8px"><input id="adEmail" placeholder="student email address" style="flex:1"><button class="btn gold" onclick="adGrant()">Make admin</button></div>
@@ -769,7 +795,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="toolrow">
 <button class="toolbtn" onclick="openBookmarks()">&#128278; Bookmarks<small>your saved questions</small></button>
 <button class="toolbtn" onclick="openSearch()">&#128269; Find a question<small>search the whole bank</small></button>
-<button class="toolbtn" onclick="openNovel()">&#128214; JAMB novel guide<small>The Lekki Headmaster</small></button>
+<button class="toolbtn" id="toolNovel" onclick="openNovel()">&#128214; JAMB novel guide<small>The Lekki Headmaster</small></button>
 <button class="toolbtn" onclick="openUpdates()">&#128227; School updates<small>news from the team</small></button>
 </div>
 </div>
@@ -777,7 +803,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <h2>Choose your examination</h2>
 <p class="sub" style="margin-top:0">Scroll through each exam below &mdash; what it offers, what it costs, and how to start.</p>
 </div>
-<div class="card hch">
+<div class="card hch" id="hchJ">
 <div class="hchIco">&#127891;</div>
 <h3>JAMB &mdash; UTME Practice</h3>
 <p class="sub" style="margin-top:6px">One exam decides your admission. Train with 12,000 questions across 12 subjects, a JAMB-style calculator, the full guide to <i>The Lekki Headmaster</i>, and a 60-question Mini Mock that feels exactly like the real hall.</p>
@@ -785,7 +811,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="lprice"><span>&#8358;2,000 / 3 months</span><span>&#8358;8,000 lifetime</span></div>
 <button class="btn solid" style="width:100%;margin-top:6px" onclick="pickExam('JAMB')">Get Started with JAMB</button>
 </div>
-<div class="card hch">
+<div class="card hch" id="hchW">
 <div class="hchIco">&#128218;</div>
 <h3>WAEC &mdash; WASSCE Practice</h3>
 <p class="sub" style="margin-top:6px">Your WASSCE result follows you for life. Practise objective papers the way they are marked &mdash; instant grading, full step-by-step explanations, and video classes that fix your weak topics after every test.</p>
@@ -793,7 +819,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="lprice"><span>&#8358;2,000 / 3 months</span><span>&#8358;8,000 lifetime</span></div>
 <button class="btn solid" style="width:100%;margin-top:6px" onclick="pickExam('WAEC')">Get Started with WAEC</button>
 </div>
-<div class="card hch">
+<div class="card hch" id="hchN">
 <div class="hchIco">&#127891;</div>
 <h3>NECO &mdash; SSCE Practice</h3>
 <p class="sub" style="margin-top:6px">Your second chance at a strong SSCE result &mdash; and the easiest place to raise your grades. Same 12 subjects, same instant marking, same deep explanations, so you keep improving after WAEC.</p>
@@ -814,7 +840,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div style="text-align:center"><button class="btn golddeep" onclick="openSubs()">&#128176; Subscribe</button></div>
 <p class="sub" style="text-align:center;margin:10px 0 0">Works offline once loaded &middot; <b>v20.1</b></p>
 </div>
-<div class="card">
+<div class="card" id="mockCard">
 <h2>Mini Mock UTME</h2>
 <p class="sub">Full JAMB simulation: English (compulsory) plus any 3 subjects &middot; 60 questions &middot; one 30-minute timer, just like the real exam. You get a result slip with your score per subject and a topic-by-topic breakdown.</p>
 <div style="text-align:center"><button class="btn solid" onclick="openMock()">&#127891; Start Mini Mock</button></div>
@@ -1005,6 +1031,10 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 <div class="card"><h2>Themes</h2><div id="novelThemes"></div></div>
 <div class="card"><h2>Likely questions</h2><p class="sub">Tap a question to see the answer.</p><div id="novelQs"></div></div>
 </div>
+<div id="s-partner" class="hidden">
+<button class="back" onclick="ptOut()">&#8592; Sign out</button>
+<div class="card" id="ptBox"></div>
+</div>
 <div id="s-updates" class="hidden">
 <button class="back" onclick="show('home')">&#8592; Home</button>
 <div class="card"><h2>&#128227; School updates</h2><p class="sub">News, exam dates and announcements from the Prime Scholars team. Only the Prime Scholars LT team can post here &mdash; every update below is <b>verified official information</b>.</p><div id="updBox"></div></div>
@@ -1032,7 +1062,7 @@ var BANK={"subjects":[{"id":"eng","name":"Use of English","icon":"📖","group":
 var U=null,pend=null,picks={subj:null,count:15,order:[],idx:0,chosen:[],timerId:null,qEnd:0,deadline:0,t0:0,locked:false};
 function stopVideo(){try{var f=document.getElementById('plFrame');if(f){f.src='';f.removeAttribute('src')}if(f&&f.contentWindow){try{f.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":[]}','*')}catch(e){}}}catch(e){}}
 function show(s){try{if(window.__psSaveScreen)localStorage.setItem('sun_screen',s)}catch(e){}
-['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','bookmarks','search','novel','updates','privacy'].forEach(function(k){document.getElementById('s-'+k).classList.toggle('hidden',k!==s)});
+['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','bookmarks','search','novel','updates','privacy','partner'].forEach(function(k){document.getElementById('s-'+k).classList.toggle('hidden',k!==s)});
 try{if(s!=='player')stopVideo()}catch(e){}try{document.getElementById('hero').classList.toggle('hidden',s==='quiz'||s==='landing')}catch(e){}try{document.getElementById('wmWrap').classList.toggle('hidden',s==='quiz'||s==='landing')}catch(e){}try{updNav(s)}catch(e){}
 /* fab visibility now fully managed by updNav */try{window.scrollTo(0,0)}catch(e){}
 try{var _q=['subj','mode','count','quiz','done'].indexOf(s)>=0,_b=document.querySelector('.bgfx'),_g=document.querySelector('.glow');
@@ -1082,7 +1112,25 @@ function playTopic(id){
  show('player');
 }
 /* ---- admin + danger zone + invite ---- */
-function openAdmin(){show('admin');$('adStats').innerHTML='<p class="sub">Loading...</p>';var pb=$('adPayRows');if(pb)pb.innerHTML='';
+function adPtnrMsg(m,bad){$('adPtnrOut').innerHTML='<p class="sub"'+(bad?' style="color:#b00"':'')+'>'+m+'</p>'}
+function adCopyP(code){var l=location.origin+location.pathname+'?p='+code;var m='Prime Scholars school code: '+code+'\nInvite link: '+l;try{navigator.clipboard.writeText(m).then(function(){toast('Code + link copied')})}catch(e){alert(m)}}
+function adMkPartner(){var sc=$('aSchool').value,st=$('aState').value,ci=$('aCity').value;
+ if(!st){adPtnrMsg('Select the state first.',true);return}
+ if(!ci){adPtnrMsg('Select the city / LGA.',true);return}
+ if(!sc||sc==='__OTHER__'){adPtnrMsg('Select the school (pick it from the list, not free text).',true);return}
+ var heard=[sc,ci,st].join(' \u00b7 ');
+ var ity=(window.__schoolGroup?ityFromGroup(window.__schoolGroup):'')||'secondary';
+ $('adPtnrGo').textContent='Generating...';
+ api({act:'mkpartner',token:TOKEN,school:sc,heard:heard,inst_type:ity}).then(function(x){$('adPtnrGo').textContent='Generate school code';
+  if(!x.ok){adPtnrMsg(x.j.err||'Could not generate.',true);return}
+  var l=location.origin+location.pathname+'?p='+x.j.code;
+  $('adPtnrOut').innerHTML='<div class="txnline"><b>'+x.j.school+'</b>'+(x.j.existing?' (code already existed \u2014 the school keeps its same link)':'')+'<br>Code: <b style="font-size:1.25rem;color:#f5b70a">'+x.j.code+'</b><br>Invite link: '+l+'<br><button class="btn solid" style="margin-top:6px" onclick="adCopyP(\''+x.j.code+'\')">Copy code + link for the principal</button></div>';
+  adLoadPartners()})
+ .catch(function(){$('adPtnrGo').textContent='Generate school code';adPtnrMsg('Network problem. Try again.',true)})}
+function adLoadPartners(){api({act:'partners',token:TOKEN}).then(function(x){if(!x.ok)return;var ps=x.j.partners||[];
+ $('adPtnrList').innerHTML=ps.length?'<div class="pickgrp" style="margin:8px 0 2px">Existing partner codes</div>'+ps.map(function(p){return '<div class="txnline"><b>'+p.school+'</b>'+(p.active?'':' \u2014 REVOKED')+'<br>Code <b>'+p.code+'</b><br><small>'+p.heard+'</small><br>'+(p.active?'<button class="btn golddeep" style="margin-top:4px;padding:6px 12px;font-size:.75rem" onclick="adRmP(\''+p.id+'\')">Revoke</button>':'')+'</div>'}).join(''):''}).catch(function(){})}
+function adRmP(id){api({act:'rmpartner',token:TOKEN,id:id}).then(function(x){if(x.ok){adLoadPartners()}}).catch(function(){})}
+function openAdmin(){show('admin');$('adStats').innerHTML='<p class="sub">Loading...</p>';var pb=$('adPayRows');if(pb)pb.innerHTML='';try{adLoadPartners()}catch(e){}
  api({act:'admin',token:TOKEN}).then(function(x){
   if(!x.ok){$('adStats').textContent=x.err;return}
   var s=x.j.stats;
@@ -1124,8 +1172,49 @@ function deleteAccount(){
   if(!x.ok){alert(x.j.err||'Could not delete.');return}
   try{localStorage.removeItem('sunshine_sess')}catch(e){}
   U=null;P=null;TOKEN='';pend=null;show('login');alert('Account deleted. Sorry to see you go.')})}
+function getRef(){try{var r=JSON.parse(localStorage.getItem('prime_ref')||'null');return (r&&r.code)?r:null}catch(e){return null}}
+function ityFromGroup(g){g=String(g||'').toLowerCase();if(!g)return '';if(g.indexOf('universit')>=0||g.indexOf('tertiary')>=0||g.indexOf('polytechnic')>=0||g.indexOf('college')>=0)return 'tertiary';if(g.indexOf('secondary')>=0)return 'secondary';return ''}
+function paintRefLock(){var r=getRef(),bn=$('refBanner');if(bn){bn.style.display=r?'block':'none';if(r)bn.innerHTML='&#127881; You were invited by <b>'+r.school+'</b>. Your school is already selected and locked &mdash; just finish your details below.'}
+ var parts=r?String(r.heard||'').split(' \u00b7 '):[];
+ ['lState','lCity','lSchool'].forEach(function(id){var b=$(id+'Box');if(!b)return;
+  if(r){var idx=(id==='lState')?2:((id==='lCity')?1:0);
+   if(parts[idx]&&!$(id).value)$(id).value=parts[idx];
+   paintPickBox(id,$(id).value);b.classList.add('locked')}
+  else{b.classList.remove('locked')}})}
+function checkRef(){var m=location.search.match(/[?&]p=([A-Za-z0-9]+)/);if(!m)return;
+ api({act:'pinfo',code:m[1].toUpperCase()}).then(function(x){if(x&&x.ok){try{localStorage.setItem('prime_ref',JSON.stringify({code:x.j.code,school:x.j.school,heard:x.j.heard,inst_type:x.j.inst_type}))}catch(e){}try{paintRefLock()}catch(e){}}}).catch(function(){})}
+var PTOK='';try{PTOK=localStorage.getItem('prime_ptok')||''}catch(e){}
+function doPLogin(){var c=$('ptCode').value.trim().toUpperCase(),e=$('ptErr');
+ if(!c){e.textContent='Enter your school code.';return}
+ e.textContent='';$('btnPt').textContent='Checking...';
+ api({act:'plogin',code:c}).then(function(x){$('btnPt').textContent='Open my school page';
+  if(!x.ok){e.textContent=x.j.err||'Could not sign in.';return}
+  PTOK=x.j.token;try{localStorage.setItem('prime_ptok',PTOK)}catch(q){};openPartner()})
+ .catch(function(){$('btnPt').textContent='Open my school page';e.textContent='Network problem. Try again.'})}
+function openPartner(){show('partner');paintPme()}
+function ptOut(){PTOK='';try{localStorage.removeItem('prime_ptok')}catch(e){}show('login');try{loginMode('pt')}catch(e){}}
+function paintPme(){var el=$('ptBox');if(!el)return;el.innerHTML='<p class="sub">Loading your school numbers...</p>';
+ api({act:'pme',token:PTOK||''}).then(function(x){
+  if(!x.ok){el.innerHTML='<p class="sub">'+(x.j.err||'Sign in again.')+'</p><button class="btn" onclick="ptOut()">Sign in again</button>';return}
+  var d=x.j,st=d.stats||{};
+  window.PTLINK=location.origin+location.pathname+'?p='+d.code;window.PTSCH=d.school;
+  el.innerHTML='<h2>'+d.school+'</h2><p class="sub">Principal corner &mdash; your school\u2019s official Prime Scholars partner page.</p>'+
+   '<div class="pickgrp" style="margin:10px 0 2px">Your school invite link &mdash; share this with your students</div>'+
+   '<input class="f" readonly value="'+window.PTLINK+'" onclick="this.select()">'+
+   '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn solid" style="flex:1" onclick="ptCopy()">Copy link</button><button class="btn gold" style="flex:1" onclick="ptShare()">Share</button></div>'+
+   '<h3 style="margin-top:16px">Your school numbers</h3>'+
+   '<div class="txnline"><b>Students from '+d.school+'</b><br>'+st.students+'</div>'+
+   '<div class="txnline"><b>Active subscriptions</b><br>'+st.subscribed+'</div>'+
+   '<div class="txnline"><b>Money made (activated payments)</b><br>&#8358;'+Number(st.revenue||0).toLocaleString()+'</div>'+
+   '<div class="txnline"><b>Your school\u2019s share ('+st.schoolPct+'%)</b><br>&#8358;'+Number(st.schoolShare||0).toLocaleString()+'</div>'+
+   '<p class="sub">Every student who joins with your link is automatically tied to '+d.school+' &mdash; no forms to fill, no mistakes. Revenue is split '+st.samPct+'% Prime Scholars / '+st.schoolPct+'% '+d.school+' per your partner agreement. Payment approvals stay with the Prime Scholars team.</p>'+
+   '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn golddeep" style="flex:1" onclick="paintPme()">Refresh numbers</button></div>'})
+ .catch(function(){el.innerHTML='<p class="sub">Network problem. Tap refresh.</p>'})}
+function ptCopy(){try{navigator.clipboard.writeText(window.PTLINK).then(function(){toast('Invite link copied')})}catch(e){alert(window.PTLINK)}}
+function ptShare(){var m='Join '+window.PTSCH+' on Prime Scholars \u2014 free JAMB practice for SS1-SS3, 12 subjects, video tutors and a timed exam engine:\n'+window.PTLINK;
+ try{if(navigator.share){navigator.share({title:'Prime Scholars',text:m}).catch(function(){ptCopy()});return}}catch(e){}ptCopy()}
 function inviteFriends(){
- var msg='Join me on Prime Scholars — free JAMB practice for SS1-SS3, 12 subjects, full video tutors and a timed exam engine:\n'+location.origin+location.pathname;
+ var msg='Join me on Prime Scholars — free JAMB practice for SS1-SS3, 12 subjects, full video tutors and a timed exam engine:\n'+location.origin+location.pathname+((P&&P.pcode)?'?p='+P.pcode:'');
  var clip=function(){try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(msg).then(function(){alert('Invite copied. Paste it in WhatsApp to send.')},function(){alert(msg)});return}}catch(e){}alert(msg)};
  try{if(navigator.share){navigator.share({title:'Prime Scholars',text:msg}).catch(function(){clip()});return}}catch(e){}
  clip()}
@@ -1136,7 +1225,7 @@ function api(body){return fetch(API,{method:'POST',headers:{'Content-Type':'appl
 function streakVal(){try{return (JSON.parse(localStorage.getItem('sun_streak')||'{}')||{}).c||0}catch(e){return 0}}
 function $(id){return document.getElementById(id)}
 initGoogle();
-function loginMode(m){$('boxIn').classList.toggle('hidden',m!=='in');$('boxNew').classList.toggle('hidden',m!=='new');$('tabIn').classList.toggle('on',m==='in');$('tabNew').classList.toggle('on',m==='new')}
+function loginMode(m){$('boxIn').classList.toggle('hidden',m!=='in');$('boxNew').classList.toggle('hidden',m!=='new');$('boxPt').classList.toggle('hidden',m!=='pt');$('tabIn').classList.toggle('on',m==='in');$('tabNew').classList.toggle('on',m==='new');$('tabPt').classList.toggle('on',m==='pt');try{paintRefLock()}catch(e){}}
 function saveSess(){try{localStorage.setItem('sunshine_sess',JSON.stringify({t:TOKEN,p:P}))}catch(x){}}
 function setUser(p){updStreak();P=p;U={name:p.name,contact:p.email,cls:p.cls};saveSess();try{paintLogoPhotos()}catch(e){}}
 function paintAvatar(el,p){if(p&&p.photo){el.style.backgroundImage='url('+p.photo+')';el.textContent=''}else{el.style.backgroundImage='none';el.textContent=p&&p.name?p.name.trim().charAt(0).toUpperCase():'\u{1F464}'}}
@@ -1177,7 +1266,8 @@ function clsFinish(){try{
 function gCreate(){
  if(!gPending){closeClsModal();return}
  $('clsGo').disabled=true;$('clsGo').textContent='Creating your account...';
- api({act:'glogin',credential:gPending.credential,cls:gCls,heard:'Google signup'}).then(function(x){
+ var _r=getRef();
+api({act:'glogin',credential:gPending.credential,cls:gCls,heard:(_r?_r.heard:'Google signup'),pcode:(_r?_r.code:''),inst_type:(_r?(_r.inst_type||''):'')}).then(function(x){
   var j=x.j||{};
   if(!j.ok){$('clsGo').disabled=false;$('clsGo').textContent='Finish sign-up';$('clsErr').textContent=j.err||'Could not finish Google sign-up. Tap the button to try again.';return}
   closeClsModal();TOKEN=j.token;setUser(j.profile);enter()
@@ -1210,7 +1300,8 @@ e.textContent='';openClsModal('email',n.split(' ')[0])}
 function emailSendCode(k){var n=$('lName').value.trim(),c=$('lContact').value.trim().toLowerCase(),e=$('lErr'),h=heardFull().trim(),pw=$('lPass').value;
 try{localStorage.setItem('sunshine_last_email',c)}catch(x){}
 resetMode=false;$('btnSend').textContent='Sending code...';$('clsGo').disabled=true;$('clsGo').textContent='Sending your code...';
-api({act:'otp',email:c,name:n,cls:k,heard:h,accepted:1}).then(function(x){
+var _r=getRef(),_pc=_r?_r.code:'',_it=_r?(_r.inst_type||''):(window.__schoolGroup?ityFromGroup(window.__schoolGroup):'');
+api({act:'otp',email:c,name:n,cls:k,heard:h,accepted:1,pcode:_pc,inst_type:_it}).then(function(x){
  $('btnSend').textContent='Send Verification Code';
  if(!x.ok){$('clsGo').disabled=false;$('clsGo').textContent='Finish sign-up';$('clsErr').textContent=x.j.err||'Could not send the code. Tap the button to try again.';return}
  closeClsModal();
@@ -1243,7 +1334,7 @@ api({act:'setpw',token:TOKEN,newPassword:a}).then(function(x){
  resetMode=false;P.has_password=true;saveSess();enter()})
 .catch(function(){e.textContent='Network problem. Try again.'})}
 /* home + profile */
-function enter(){try{paintHero()}catch(e){}try{paintLogoPhotos()}catch(e){}try{paintResume()}catch(e){}try{paintSchool()}catch(e){}
+function enter(){try{document.body.classList.toggle('tert',!!(P&&P.inst_type==='tertiary'))}catch(e){}try{paintHero()}catch(e){}try{paintLogoPhotos()}catch(e){}try{paintResume()}catch(e){}try{paintSchool()}catch(e){}
 try{loadSubs().then(function(){try{paintTrial()}catch(er){}})}catch(x){}
 try{loadBank()}catch(x){}if(!P){show('login');return}
 show('home')}
@@ -1887,7 +1978,13 @@ var PKCONF={
   out.push({label:'',items:['__OTHER__']});
   return out}},
  lHeard:{title:'How did you hear about the app?',search:true,ph:'Select your school or institution',note:'&#9888;&#65039; Please be sincere. This is the school your subscription will be credited to.',groups:function(q){return heardGroups(q)}},
- subHeard:{title:'Your school / institution',search:true,ph:'Select your school or institution',note:'&#9888;&#65039; Be sincere. This is the school your subscription will be credited to.',groups:function(q){return heardGroups(q)}}};
+ subHeard:{title:'Your school / institution',search:true,ph:'Select your school or institution',note:'&#9888;&#65039; Be sincere. This is the school your subscription will be credited to.',groups:function(q){return heardGroups(q)}},
+ aState:{title:'Select your state',search:true,ph:'Select state',groups:function(q){return [{label:'All 36 states + FCT',items:STATE_DATA.states.filter(function(sx){return !q||sx.toLowerCase().indexOf(q)>=0})}]}},
+ aCity:{title:'Select your city / LGA',search:true,ph:'Select city / LGA',groups:function(q){var st=$('aState').value;var lg=STATE_DATA.lgas[st]||[];return [{label:st+' \u00b7 Local Government Areas',items:lg.filter(function(sx){return !q||sx.toLowerCase().indexOf(q)>=0})}]}},
+ aSchool:{title:'Select your school or institution',search:true,ph:'Select your school or institution',note:'Generate one code per school. The school\u2019s students will be tied to it automatically.',groups:function(q){var city=$('aCity').value,st=$('aState').value;var groups=STATE_DATA.schools[st+'|'+city]||[];var out=[];
+  groups.forEach(function(g){out.push({label:g.label,items:g.items.filter(function(n){return !q||n.toLowerCase().indexOf(q)>=0})})});
+  out.push({label:'',items:['__OTHER__']});
+  return out}}};
 function openPick(id){try{
  var conf=PKCONF[id];if(!conf)return;
  PICK={id:id,conf:conf};
@@ -1905,15 +2002,17 @@ function renderPickOpts(){try{
  gs.forEach(function(g){
   if(g.label)html+='<div class="pickgrp">'+g.label+'</div>';
   g.items.forEach(function(n){
-   html+='<div class="pickrow'+(n===cur?' sel':'')+'" onclick="pickVal(this)" data-v="'+n.replace(/"/g,'&quot;')+'">'+(n==='__OTHER__'?'My school is not listed \u2014 type it below':n.replace(/</g,'&lt;'))+'</div>'})});
+   html+='<div class="pickrow'+(n===cur?' sel':'')+'" onclick="pickVal(this)" data-v="'+n.replace(/"/g,'&quot;')+'" data-g="'+String(g.label||'').replace(/"/g,'&quot;')+'">'+(n==='__OTHER__'?'My school is not listed \u2014 type it below':n.replace(/</g,'&lt;'))+'</div>'})});
  if(!html)html='<p class="sub" style="padding:20px 8px;text-align:center">No school matches that search. Check the spelling and try again.</p>';
  $('pickOpts').innerHTML=html;
 }catch(e){}}
 function pickVal(el){try{
  var v=el.getAttribute('data-v');
+ if(PICK.id==='lSchool'||PICK.id==='aSchool'){try{window.__schoolGroup=el.getAttribute('data-g')||''}catch(e){}}
  $(PICK.id).value=v;
  paintPickBox(PICK.id,v);
  if(PICK.id==='lState'){$('lCity').value='';paintPickBox('lCity','');$('lSchool').value='';paintPickBox('lSchool','');$('lSchoolOther').classList.add('hidden')}
+ if(PICK.id==='aState'){$('aCity').value='';paintPickBox('aCity','');$('aSchool').value='';paintPickBox('aSchool','')}
  if(PICK.id==='lCity'){$('lSchool').value='';paintPickBox('lSchool','');$('lSchoolOther').classList.add('hidden')}
  if(PICK.id==='lSchool'){$('lSchoolOther').classList.toggle('hidden',v!=='__OTHER__');if(v==='__OTHER__'){$('lSchoolOther').focus();$('lSchoolBox').innerHTML='<span class="pv">School not listed \u2014 typing\u2026</span><span class="chev">&#9662;</span>'}}
  closePick();
@@ -1929,6 +2028,7 @@ function paintHero(){try{
  var h=new Date().getHours(),g=h<12?'Good morning':(h<16?'Good afternoon':'Good evening');
  var fn=(P&&P.name?P.name.split(' ')[0]:'Scholar');
  $('hbHi').textContent=g+', '+fn;
+ try{$('hbKick').textContent=(P&&P.brand)?P.brand:'Prime Scholars'}catch(e){}
  var d=new Date(),days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
  var mos=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
  $('hbDate').textContent=days[d.getDay()]+', '+d.getDate()+' '+mos[d.getMonth()]+' \u00b7 exam day is any day';
@@ -2156,7 +2256,7 @@ function updNav(s){
 </script>
 <script>
 /* ============ phone Back button: step back inside the app, never exit ============ */
-var __psScreens=['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','privacy','updates','search','novel','bookmarks'];
+var __psScreens=['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','privacy','updates','search','novel','bookmarks','partner'];
 function psCur(){for(var i=0;i<__psScreens.length;i++){var el=document.getElementById('s-'+__psScreens[i]);if(el&&!el.classList.contains('hidden'))return __psScreens[i]}return 'home'}
 function psToast(m){var t=document.getElementById('psToast');if(!t){t=document.createElement('div');t.id='psToast';t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(12,58,28,.96);color:#ffe08a;border:1px solid rgba(255,224,138,.4);border-radius:12px;padding:10px 16px;font-size:13.5px;z-index:999;max-width:82vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(t)}t.textContent=m;t.style.opacity='1';clearTimeout(t.__h);t.__h=setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .4s'},2200)}
 function psBackOnce(){
@@ -2165,6 +2265,7 @@ function psBackOnce(){
   if(scr==='home'){return 'home'}
   if(scr==='quiz'){if(MODE==='cbt'||MODE==='mock'){if(!confirm('Leave the test? It will not be saved.'))return}try{clearInterval(picks.timerId)}catch(e){}show('home');return}
   if(scr==='player'){try{stopVideo()}catch(e){}show('tutors');return}
+  if(scr==='partner'){try{ptOut()}catch(e){show('login')}return}
   try{nav('home')}catch(e){show('home')}
 }
 function psPushGuard(){try{history.pushState({ps:1},'',location.href)}catch(e){}}
@@ -2174,7 +2275,7 @@ window.addEventListener('popstate',function(){
   if(r==='home'){psToast('Press Back again to leave Prime Scholars');window.__psArm=Date.now()}
   else if(window.__psArm&&Date.now()-window.__psArm<2200){window.__psArm=0;history.go(-3)}
 });
-psPushGuard();psPushGuard();
+psPushGuard();psPushGuard();try{checkRef()}catch(e){}
 
 /* ============ refresh reopens the same page ============ */
 var __psRestorable=['home','subj','utme','utme2','tutors','progress','subs','history','profile','privacy','admin','mock'];
