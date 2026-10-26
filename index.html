@@ -1049,17 +1049,17 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 </div>
 </div>
 <div id="s-csetup" class="hidden">
-<button class="back" onclick="show('home')">&#8592; Home</button>
+<button class="back" onclick="csBack()">&#8592; Back</button>
 <div class="card">
-<h2>Complete your account setup</h2>
-<p class="sub">You are already signed in under <b id="csSchool">(your school)</b>. Add your details to keep your progress, recover your account by email and subscribe when ready.</p>
+<h2 id="csTitle">Complete your account setup</h2>
+<p class="sub" id="csSub">You are already signed in under <b id="csSchool">(your school)</b>. Add your details to keep your progress, recover your account by email and subscribe when ready.</p>
 <div class="err" id="csErr"></div>
 <input class="f" id="csName" placeholder="Full name">
 <input class="f" id="csContact" placeholder="Email address (the one you use for JAMB)" inputmode="email" type="email">
 <input class="f" id="csPass" placeholder="Create a password (at least 6 characters)" type="password">
 <div class="lab" style="margin-top:12px">Select your class</div>
 <div class="tabs" style="margin-top:6px"><div class="tab" id="csC1" onclick="csPick('SS1')">SS1</div><div class="tab" id="csC2" onclick="csPick('SS2')">SS2</div><div class="tab" id="csC3" onclick="csPick('SS3')">SS3</div></div>
-<button class="btn gold" style="width:100%;margin-top:12px" id="csGo" onclick="csSendCode()">Send Verification Code</button>
+<button class="btn gold" style="width:100%;margin-top:12px" id="csGo" onclick="csGoClick()">Send Verification Code</button>
 </div>
 </div>
 <div id="s-partner" class="hidden">
@@ -1217,7 +1217,7 @@ function checkRef(){var m=location.search.match(/[?&]p=([A-Za-z0-9]+)/);if(!m)re
   try{localStorage.setItem('prime_ref',JSON.stringify({code:x.j.code,school:x.j.school,heard:x.j.heard,inst_type:x.j.inst_type}))}catch(e){}
   try{paintRefLock()}catch(e){}
   var _has=!!TOKEN;try{_has=_has||!!(JSON.parse(localStorage.getItem('sunshine_sess')||'null')||{}).t}catch(e){}
-  if(!_has){api({act:'plink',code:x.j.code}).then(function(y){if(y&&y.ok){TOKEN=y.j.token;setUser(y.j.profile);enter()}}).catch(function(){})}
+  if(!_has){try{openPjoin(x.j.code,x.j.school)}catch(e){}}
  }}).catch(function(){})}
 var PTOK='';try{PTOK=localStorage.getItem('prime_ptok')||''}catch(e){}
 function doPLogin(){var c=$('ptCode').value.trim().toUpperCase(),pn=$('ptPin').value.trim(),e=$('ptErr');
@@ -1256,12 +1256,28 @@ function paintPme(){var el=$('ptBox');if(!el)return;el.innerHTML='<p class="sub"
    '<div class="txnline"><b>Active subscriptions</b><br>'+st.subscribed+'</div>'+
    '<div class="txnline"><b>Money made (activated payments)</b><br>&#8358;'+Number(st.revenue||0).toLocaleString()+'</div>'+
    '<div class="txnline"><b>Your school\u2019s share ('+st.schoolPct+'%)</b><br>&#8358;'+Number(st.schoolShare||0).toLocaleString()+'</div>'+
-   '<p class="sub">Every student who joins with your link is automatically tied to '+d.school+' &mdash; no forms to fill, no mistakes. Revenue is split '+st.samPct+'% Prime Scholars / '+st.schoolPct+'% '+d.school+' per your partner agreement. Payment approvals stay with the Prime Scholars team.</p>'+
+   '<p class="sub">Every student who joins with your link fills one short form and is automatically tied to '+d.school+' &mdash; no forms to fill, no mistakes. Revenue is split '+st.samPct+'% Prime Scholars / '+st.schoolPct+'% '+d.school+' per your partner agreement. Payment approvals stay with the Prime Scholars team.</p>'+
    '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn golddeep" style="flex:1" onclick="paintPme()">Refresh numbers</button></div>'})
  .catch(function(){el.innerHTML='<p class="sub">Network is slow or disconnected. Check your connection and try again.</p><button class="btn" onclick="paintPme()">Try again</button>'})}
 var csCls='';
 function csPick(k){csCls=k;['1','2','3'].forEach(function(i){var b=$('csC'+i);if(b)b.classList.toggle('on',k==='SS'+i)})}
 function showCsetup(){try{$('csSchool').textContent=(P&&P.brand)||'your school'}catch(e){}show('csetup')}
+var JOIN=null;
+function openPjoin(code,school){JOIN={code:code,school:school};
+ try{$('csTitle').textContent='Join '+school;$('csSub').innerHTML='You were invited by <b>'+school+'</b>. Enter your details once and tap Submit \u2014 no email code needed, because your school is our official partner.';$('csGo').textContent='Submit and start';$('csErr').textContent='';csPick(csCls||'')}catch(e){}
+ show('csetup')}
+function csBack(){if(JOIN){JOIN=null;try{$('csTitle').textContent='Complete your account setup';$('csSub').innerHTML='You are already signed in under <b id="csSchool">(your school)</b>. Add your details to keep your progress, recover your account by email and subscribe when ready.';$('csGo').textContent='Send Verification Code'}catch(e){};show('landing')}else{show('home')}}
+function csGoClick(){if(JOIN){csJoinSubmit()}else{csSendCode()}}
+function csJoinSubmit(){var n=$('csName').value.trim(),c=$('csContact').value.trim().toLowerCase(),pw=$('csPass').value,e=$('csErr');
+ if(n.length<3){e.textContent='Enter your full name.';return}
+ if(!/^\S+@\S+\.\S+$/.test(c)){e.textContent='Enter your email address.';return}
+ if(pw.length<6){e.textContent='Create a password with at least 6 characters.';return}
+ if(!csCls){e.textContent='Select your class.';return}
+ e.textContent='';$('csGo').textContent='Creating your account...';
+ api({act:'pjoin',code:JOIN.code,name:n,email:c,pass:pw,cls:csCls}).then(function(x){
+  if(!x.ok){$('csGo').textContent='Submit and start';e.textContent=x.j.err||'Could not create your account. Try again.';return}
+  TOKEN=x.j.token;setUser(x.j.profile);JOIN=null;enter()})
+ .catch(function(){$('csGo').textContent='Submit and start';e.textContent='Network problem. Try again.'})}
 function csSendCode(){var n=$('csName').value.trim(),c=$('csContact').value.trim().toLowerCase(),pw=$('csPass').value,e=$('csErr');
  if(!P||!P.prov){e.textContent='Your account is already complete.';return}
  if(n.length<3){e.textContent='Enter your full name.';return}
