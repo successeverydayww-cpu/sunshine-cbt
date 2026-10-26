@@ -53,6 +53,75 @@ body.tgreen .card{box-shadow:0 8px 26px rgba(0,0,0,.5)}
 body.tgreen .back{color:#fff}
 body.tgreen .resumechip{background:#fff}
 body.tgreen .toolbtn{background:#fff}
+
+
+/* ===== CRISP LAYER (both themes): always-white cards get dark solid text ===== */
+.lchapter,.lchapter p,.lchapter .landp,.lchapter .sub,.lchapter li,.lchapter span:not(.lchip):not(.lprice span){color:#1f2f23}
+.lchapter h2,.lchapter h3,.lchapter b,.lchapter strong{color:#0c3a1c}
+.lchapter .lchip{color:#1f4d2c}
+.lchapter .lprice span{color:#5a4100}
+.lchapter i{color:#1f2f23}
+.sample,.sample p,.sample b,.sample span{color:#1f2f23}
+.sample a{color:#0c3a1c;text-decoration:underline;font-weight:700}
+.landnote a,.landsec a,.sub a{color:#0c5a2a;text-decoration:underline;font-weight:700}
+body:not(.twhite) .landnote a{color:#ffe08a}
+.card,.card p,.card li{color:#1f2f23}
+.card h2,.card h3,.card b{color:#0c3a1c}
+.card .sub{color:#33433a}
+.card .btn.solid,.card .btn.gold,.card .btn.golddeep,.card button.btn{color:inherit}
+.card .btn.solid{color:#fff}
+.card .btn.gold{color:#241a00}
+.card .btn.golddeep{color:#fff}
+.card .lab{color:#33433a}
+
+
+/* tabs + countdown: solid readable colours */
+.card .tab{color:#0c3a1c}
+.card .tab.on{color:#fff !important}
+.landcount{background:#0c3a1c !important;border:1.5px solid #f5b70a !important}
+.landcount,.landcount small{color:#ffffff !important;opacity:1 !important;text-shadow:none !important}
+.landcount b{color:#ffe08a !important}
+.landcount small{font-weight:600}
+
+
+/* final crisp pass: no shadows or filters on any text */
+.btn,.btn.gold,.btn.golddeep,.wmenuBtn,.bnav button .bi{text-shadow:none !important;filter:none !important}
+
+/* ===== WHITE THEME: every element readable, solid colours, no glow ===== */
+body.twhite{background:#fff;color:#1a2a1c}
+body.twhite .landhero,body.twhite #s-landing{color:#1a2a1c}
+body.twhite .landtitle{color:#0c3a1c}
+body.twhite .landsub{color:#2f3f31}
+body.twhite .landnote{color:#4a5a4c}
+body.twhite .sschips span{background:#fff8e0;color:#7a5200;border-color:#c98d00}
+body.twhite .sschips em{color:#3d4d3f}
+body.twhite .landsec,body.twhite .landcard{background:#f6faf5;border:1px solid #cfdccb;box-shadow:none}
+body.twhite .landsec h2,body.twhite .landcta h2{color:#0c3a1c}
+body.twhite .landp{color:#26362a}
+body.twhite .landfeat b{color:#0c3a1c}
+body.twhite .landfeat span{color:#33433a}
+body.twhite .landfeat div{border-bottom-color:#dfe8db}
+body.twhite .landfeat i{background:#fff8e0;color:#7a5200;border-color:#c98d00}
+body.twhite .landtile{background:#eef6ee;border-color:#2e8b4a}
+body.twhite .landtile b{color:#0c3a1c}
+body.twhite .landtile small{color:#33433a}
+body.twhite .landtile span{color:#1a2a1c}
+body.twhite .foot{color:#33433a}
+body.twhite .lchapter{background:#fff}
+body.twhite .hero h1{color:#0c3a1c}
+body.twhite .hero p{color:#33433a}
+body.twhite .who{background:#0c3a1c;border-color:#0c3a1c}
+body.twhite .back{background:#0c3a1c;color:#ffe08a}
+body.twhite .sub,body.twhite .lab{color:#33433a}
+body.twhite .card{box-shadow:0 2px 10px rgba(12,58,28,.12);border:1px solid #d6e2d2}
+body.twhite h1,body.twhite h2,body.twhite h3{text-shadow:none}
+body.twhite *{text-shadow:none}
+body.twhite .foot,body.twhite .landnote{opacity:1}
+/* light-on-dark landing blocks that have their own dark card keep light text */
+body.twhite .heroBand,body.twhite .heroBand *{color:#fff}
+body.twhite .heroBand .hbKick,body.twhite .heroBand .hbCh b{color:#ffe08a}
+body.twhite .bnav button{color:#cfe0d2}
+body.twhite .bnav button.on{color:#ffe08a}
 .exam{flex:1;border:2px solid #d4dccf;background:#fff;border-radius:12px;padding:13px 6px;text-align:center}
 .exam.on{border-color:var(--g2);background:linear-gradient(135deg,var(--g2),var(--g1));color:#fff;cursor:pointer}
 .exam.off{opacity:1;background:#fff;border:2px dashed #cfc7b4;color:#4c4636;box-shadow:none}
@@ -161,18 +230,19 @@ select.f{background:#fff}
 .wmenu div:active{background:#eef6f0}
 .qWho{position:fixed;top:8px;left:12px;z-index:55;display:flex;align-items:center;max-width:44vw}
 .qWho .mini{margin-right:6px}
-.qName{color:#fff;font-size:.75rem;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qName{color:#fff;font-size:.75rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mockgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
 .mockgrid .exam{padding:10px 6px;cursor:pointer;min-width:0}
 .mockgrid .exam b{font-size:.8rem;line-height:1.15}
 .mockgrid .exam small{font-size:.58rem}
 /* ---- bottom nav ---- */
-.bnav{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;background:linear-gradient(180deg,rgba(6,34,17,.92),rgba(4,24,12,.97));border-top:1px solid rgba(255,200,60,.25);padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;background:linear-gradient(180deg,rgba(6,34,17,.92),rgba(4,24,12,.97));border-top:1px solid rgba(255,200,60,.25);padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
 .bnav button{flex:1;background:none;border:none;color:#cfd8c9;font-size:.66rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
 .bnav button .bi{font-size:1.35rem;line-height:1.2;filter:grayscale(.35)}
 .bnav button.on{color:var(--gold)}
 .bnav button.on .bi{filter:none}
-body{padding-bottom:64px}
+body{padding-bottom:0}
+body.hasnav{padding-bottom:64px}
 
 .inp{width:100%;box-sizing:border-box;padding:11px 13px;border-radius:11px;border:1px solid #2e6b3f;background:#0a3218;color:#fff;font-size:15px;margin:8px 0 4px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:6px 0 2px;-webkit-overflow-scrolling:touch}
@@ -267,9 +337,10 @@ body{background:radial-gradient(1200px 500px at 50% -8%,rgba(46,139,74,.5),trans
 .hbDate{font-size:.72rem;opacity:.85}
 .hbChips{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .hbCh{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 12px;font-size:.72rem;font-weight:600;color:#fff}
-.hbCh b{color:var(--gold2);font-family:var(--fd)}
+.hbCh b{color:var(--gold2);font-family:Inter,system-ui,sans-serif;font-weight:800}
+.hbE{font-style:normal;font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;font-size:.9rem;line-height:1}
 /* who bar — glass */
-.who{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:999px;color:#fff;box-shadow:0 4px 18px rgba(3,18,9,.25)}
+.who{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:999px;color:#fff;box-shadow:0 4px 18px rgba(3,18,9,.25)}
 .who button{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#241a00;font-weight:700;border:none;border-radius:999px;padding:8px 14px;box-shadow:0 4px 14px rgba(245,183,10,.4);transition:transform .15s ease}
 .who button:active{transform:scale(.95)}
 .statchip{background:linear-gradient(135deg,rgba(245,183,10,.25),rgba(245,183,10,.15));border:1px solid rgba(245,183,10,.5);color:var(--gold2);border-radius:999px;font-weight:600}
@@ -303,12 +374,12 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 .subj:active{transform:scale(.95);box-shadow:var(--ring)}
 .subj .ic{border-radius:14px;box-shadow:0 6px 14px rgba(12,58,28,.25)}
 /* bottom nav — glass dock */
-.bnav{background:rgba(6,26,14,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid rgba(245,183,10,.28);box-shadow:0 -8px 30px rgba(3,18,9,.35)}
+.bnav{background:#0a2a14;border-top:1px solid rgba(245,183,10,.28);box-shadow:0 -8px 30px rgba(3,18,9,.35)}
 .bnav button{transition:color .2s ease}
 .bnav button.on{color:var(--gold2)}
 /* hero on login */
 .hero h1{color:var(--gold);letter-spacing:1px}
-.hero p{color:rgba(255,255,255,.85);letter-spacing:2.5px;text-transform:uppercase;font-size:.68rem;font-weight:600}
+.hero p{color:#fff;opacity:1;letter-spacing:2.5px;text-transform:uppercase;font-size:.68rem;font-weight:700}
 /* pickboxes (class & school) — look exactly like inputs */
 .pickbox{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:50px;padding:13px 15px;background:#fff;border:1.5px solid #d9e2d5;border-radius:14px;cursor:pointer;transition:border .15s ease,box-shadow .15s ease;font-family:var(--fb);font-size:1rem}
 .pickbox:active{border-color:var(--gold);box-shadow:var(--ring)}
@@ -351,7 +422,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 ::selection{background:var(--gold);color:#241a00}
 #s-landing{padding-bottom:60px}
 .landhero{text-align:center;padding:34px 18px 10px}
-.landhero .logo.lg{margin:0 auto 14px;animation:landpulse 3.2s ease-in-out infinite}
+.landhero .logo.lg{margin:0 auto 14px}
 @keyframes landpulse{0%,100%{filter:drop-shadow(0 0 10px rgba(245,183,10,.35))}50%{filter:drop-shadow(0 0 22px rgba(245,183,10,.6))}}
 .landsub{color:#cfe0d2;font-size:.92rem;line-height:1.55;max-width:420px;margin:8px auto 0}
 .landnote{color:#8fa895;font-size:.74rem;margin:12px 0 0}
@@ -1865,7 +1936,7 @@ function paintHero(){try{
  var all=[];try{all=JSON.parse(localStorage.getItem('sun_prog')||'[]')}catch(e){}
  var ok=0,n=0;all.forEach(function(e){ok+=(e.ok||0);n+=(e.n||0)});
  var acc=n>0?Math.round(ok*100/n):0;
- $('hbChips').innerHTML='<span class="hbCh">\u128293 <b>'+st.c+'</b> streak</span><span class="hbCh">\u128221 <b>'+all.length+'</b> tests</span><span class="hbCh">\u127919 <b>'+acc+'%</b> accuracy</span>';
+ $('hbChips').innerHTML='<span class="hbCh"><em class="hbE">&#128293;</em><b>'+st.c+'</b> streak</span><span class="hbCh"><em class="hbE">&#128221;</em><b>'+all.length+'</b> tests</span><span class="hbCh"><em class="hbE">&#127919;</em><b>'+acc+'%</b> accuracy</span>';
 }catch(e){}}
 function updStreak(){try{
  var st={d:"",c:0,b:0};try{st=JSON.parse(localStorage.getItem('sun_streak')||'{"d":"","c":0,"b":0}')}catch(e){}
@@ -2078,7 +2149,7 @@ function nav(where){
 function updNav(s){
  var navIds={home:'bnHome',progress:'bnProg',mock:'bnTutors',};
  var showNav=['home','subj','utme','utme2','mode','count','tutors','player','progress','mock','subs','profile','admin','done'].indexOf(s)>=0;
- document.getElementById('bnav').style.display=showNav?'flex':'none';
+ document.getElementById('bnav').style.display=showNav?'flex':'none';try{document.body.classList.toggle('hasnav',showNav)}catch(e){}
  Object.keys(navIds).forEach(function(k){document.getElementById(navIds[k]).classList.toggle('on',k===s)});
  document.getElementById('hero').classList.toggle('hidden',s==='quiz'||s==='landing');
  }
