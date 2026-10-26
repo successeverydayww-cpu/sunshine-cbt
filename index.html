@@ -22,7 +22,7 @@ body{background:var(--cream);min-height:100vh;color:#1a1a1a;overflow-x:hidden;po
 .logo{width:230px;max-width:70%;margin:0 auto;display:block;filter:drop-shadow(0 0 18px rgba(245,183,10,.65));animation:pulse 3.4s ease-in-out infinite}
 @keyframes pulse{0%,100%{filter:drop-shadow(0 0 12px rgba(245,183,10,.5))}50%{filter:drop-shadow(0 0 28px rgba(245,183,10,.9))}}
 .hero{text-align:center;color:#fff;padding:26px 16px 12px}
-.hero h1{font-size:1.05rem;letter-spacing:1px;margin-top:10px;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.hero h1{font-size:1.05rem;letter-spacing:1px;margin-top:10px}
 .hero p{font-size:.7rem;letter-spacing:2.5px;text-transform:uppercase;opacity:.9;margin-top:2px}
 .card{background:#fff;background:rgba(255,255,255,.96);border-radius:16px;margin:14px;padding:18px;box-shadow:0 6px 22px rgba(0,0,0,.35)}
 #s-quiz .card{position:relative;z-index:5;transform:translateZ(0);background:#fff}
@@ -36,7 +36,7 @@ input.f:focus{outline:none;border-color:var(--g2)}
 .btn.ghost{background:none;color:var(--g2);border:2px solid var(--g2)}
 .btn.solid{background:#12582d;color:#fff;border:2px solid var(--gold);font-weight:800;box-shadow:0 4px 16px rgba(3,18,9,.3)}
 .err{color:#c33;font-size:.8rem;margin-top:8px;min-height:1em}
-.back{background:none;border:none;color:#fff;font-size:.9rem;text-decoration:underline;font-family:inherit;cursor:pointer;margin:6px 16px 0;display:block}
+.back{background:rgba(12,58,28,.92);border:1px solid rgba(255,224,138,.5);color:#ffe08a;font-size:.85rem;font-weight:700;text-decoration:none;font-family:inherit;cursor:pointer;margin:10px 16px 0;padding:7px 16px;border-radius:999px;display:inline-block;box-shadow:0 4px 14px rgba(0,0,0,.28)}
 .who{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:8px 18px;font-size:.78rem}
 .who button{background:none;border:1px solid #ffffff88;color:#fff;border-radius:8px;padding:4px 10px;font-family:inherit;font-size:.72rem;cursor:pointer}
 .examrow{display:flex;gap:10px;margin-top:10px}
@@ -110,7 +110,7 @@ body.tgreen .toolbtn{background:#fff}
 .csend{width:56px;border:none;border-radius:10px;background:var(--g2);color:#fff;font-size:.9rem;cursor:pointer}
 .hidden{display:none}
 html.resume-home #s-login,html.resume-home #s-landing{display:none!important}
-.foot{text-align:center;font-size:.66rem;color:#d6e8da;padding:10px 16px 90px;line-height:1.6;text-shadow:0 1px 4px #000}
+.foot{text-align:center;font-size:.66rem;color:#d6e8da;padding:10px 16px 90px;line-height:1.6}
 .note{font-size:.72rem;color:#7a5b00;background:#fff8e0;border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.5}
 .codebox{background:#e4f3e8;border:2px dashed var(--g2);border-radius:10px;padding:10px;margin-top:10px;font-size:.8rem;line-height:1.5;color:var(--g1)}
 .codebox b{font-size:1.3rem;letter-spacing:6px;display:block;text-align:center;margin-top:4px}
@@ -307,7 +307,7 @@ input.f:focus,select.f:focus{outline:none;border-color:var(--gold);box-shadow:va
 .bnav button{transition:color .2s ease}
 .bnav button.on{color:var(--gold2)}
 /* hero on login */
-.hero h1{background:linear-gradient(120deg,#fff 10%,var(--gold2) 55%,var(--gold) 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;filter:drop-shadow(0 4px 14px rgba(0,0,0,.4))}
+.hero h1{color:var(--gold);letter-spacing:1px}
 .hero p{color:rgba(255,255,255,.85);letter-spacing:2.5px;text-transform:uppercase;font-size:.68rem;font-weight:600}
 /* pickboxes (class & school) — look exactly like inputs */
 .pickbox{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:50px;padding:13px 15px;background:#fff;border:1.5px solid #d9e2d5;border-radius:14px;cursor:pointer;transition:border .15s ease,box-shadow .15s ease;font-family:var(--fb);font-size:1rem}
@@ -2085,7 +2085,7 @@ function updNav(s){
 </script>
 <script>
 /* ============ phone Back button: step back inside the app, never exit ============ */
-var __psScreens=['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','privacy'];
+var __psScreens=['landing','login','verify','setpw','profile','home','subj','utme','utme2','mode','count','quiz','done','tutors','player','admin','progress','mock','subs','history','privacy','updates','search','novel','bookmarks'];
 function psCur(){for(var i=0;i<__psScreens.length;i++){var el=document.getElementById('s-'+__psScreens[i]);if(el&&!el.classList.contains('hidden'))return __psScreens[i]}return 'home'}
 function psToast(m){var t=document.getElementById('psToast');if(!t){t=document.createElement('div');t.id='psToast';t.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(12,58,28,.96);color:#ffe08a;border:1px solid rgba(255,224,138,.4);border-radius:12px;padding:10px 16px;font-size:13.5px;z-index:999;max-width:82vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(t)}t.textContent=m;t.style.opacity='1';clearTimeout(t.__h);t.__h=setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .4s'},2200)}
 function psBackOnce(){
