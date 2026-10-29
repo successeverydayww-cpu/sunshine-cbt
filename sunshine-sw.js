@@ -1,17 +1,47 @@
-var C='prime-v49';
-self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])).catch(()=>{}));self.skipWaiting()});
-self.addEventListener('message',e=>{if(e.data&&e.data.type==='SKIP_WAITING')self.skipWaiting()});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
-self.addEventListener('fetch',e=>{
- if(e.request.method!=='GET')return;
- var u=e.request.url;
- if(u.indexOf('fonts.googleapis.com')>=0||u.indexOf('fonts.gstatic.com')>=0){
-  e.respondWith(caches.match(e.request).then(m=>m||fetch(e.request).then(r=>{const c=r.clone();caches.open(C).then(x=>x.put(e.request,c));return r}).catch(()=>m)));
-  return}
- e.respondWith(
-  fetch(e.request).then(r=>{
-   if(u.indexOf('sunshine')>=0||u.indexOf(location.origin)>=0){const c=r.clone();caches.open(C).then(x=>x.put(e.request,c))}
-   return r;
-  }).catch(()=>caches.match(e.request))
- );
+
+var C='prime-v53',V='53';
+self.addEventListener('install',function(){self.skipWaiting()});
+self.addEventListener('activate',function(e){
+  e.waitUntil(Promise.resolve().then(function(){
+    return caches.keys().then(function(ks){
+      return Promise.all(ks.map(function(k){ if(k!==C){ try{return caches.delete(k)}catch(x){} } return null }));
+    }).catch(function(){});
+  }).then(function(){
+    try{ if(self.registration.navigationPreload&&self.registration.navigationPreload.disable) return self.registration.navigationPreload.disable(); }catch(x){}
+  }).then(function(){ return self.clients.claim(); }).then(function(){
+    return self.clients.matchAll({type:'window',includeUncontrolled:true}).then(function(list){
+      return Promise.all(list.map(function(c){
+        try{
+          var u=new URL(c.url);
+          if(u.searchParams.get('swh')===V) return null;
+          u.searchParams.set('swh',V);
+          return c.navigate(u.href).catch(function(){});
+        }catch(x){ return null; }
+      }));
+    });
+  }).catch(function(){}));
 });
+self.addEventListener('fetch',function(e){
+  var r=e.request;
+  if(r.method!=='GET') return;
+  if(r.mode==='navigate'){
+    e.respondWith(fetch(r,{cache:'reload'}).then(function(res){
+      try{ var cp=res.clone(); caches.open(C).then(function(c){ c.put('/',cp); }); }catch(x){}
+      return res;
+    }).catch(function(){
+      return caches.match('/').then(function(m){ return m||fetch(r); }).catch(function(){ return fetch(r); });
+    }));
+    return;
+  }
+  try{
+    if(new URL(r.url).origin!==self.location.origin) return;
+  }catch(x){ return; }
+  e.respondWith(caches.match(r).then(function(m){
+    if(m) return m;
+    return fetch(r).then(function(res){
+      try{ var cp=res.clone(); caches.open(C).then(function(c){ c.put(r,cp); }); }catch(x){}
+      return res;
+    }).catch(function(){ return m; });
+  }));
+});
+self.addEventListener('message',function(e){ if(e.data&&e.data.type==='SKIP_WAITING'){ self.skipWaiting(); } });
