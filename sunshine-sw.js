@@ -1,5 +1,5 @@
 
-var C='prime-v53',V='53';
+var C='prime-v54',V='54';
 self.addEventListener('install',function(){self.skipWaiting()});
 self.addEventListener('activate',function(e){
   e.waitUntil(Promise.resolve().then(function(){
