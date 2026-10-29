@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" translate="no" class="notranslate"><head><meta charset="UTF-8">
 <meta name="google" content="notranslate">
-<script>(function(){try{var V='v48';if(localStorage.getItem('ps_purged')===V)return;localStorage.setItem('ps_purged',V);var jobs=[];if(window.caches&&caches.keys)jobs.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}));if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)jobs.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister()}))}));if(jobs.length){Promise.all(jobs).then(function(){try{sessionStorage.removeItem('ps_sw_reloaded')}catch(e){}location.replace(location.pathname+'?v=48')}).catch(function(){})}}catch(e){}})();</script>
+<script>(function(){try{var V='v49';if(localStorage.getItem('ps_purged')===V)return;localStorage.setItem('ps_purged',V);if(window.caches&&caches.keys){caches.keys().then(function(ks){ks.forEach(function(k){if(k!=='prime-v49'){try{caches.delete(k)}catch(e){}}})}).catch(function(){})}if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){try{r.unregister()}catch(e){}})}).catch(function(){})}}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,interactive-widget=resizes-content">
 <meta name="theme-color" content="#0b4a26">
 <title>Prime Scholars</title>
@@ -1554,7 +1554,7 @@ function sidRow(compact){
  wrap.appendChild(row);
  var note=document.createElement('div');
  note.textContent=compact?'Use this ID to pay from OPay or any bank app.':'This is your Student ID. Use it when paying from OPay, Moniepoint or any bank app. It is also how your school finds you.';
- note.style.cssText='font:12px/1.5 sans-serif;color:#555;margin-top:8px';var stamp=document.createElement('div');stamp.textContent='Build v48';stamp.style.cssText='font:10px/1.4 sans-serif;color:#a9a496;margin-top:6px';note.appendChild(stamp);
+ note.style.cssText='font:12px/1.5 sans-serif;color:#555;margin-top:8px';var stamp=document.createElement('div');stamp.textContent='Build v49';stamp.style.cssText='font:10px/1.4 sans-serif;color:#a9a496;margin-top:6px';note.appendChild(stamp);
  wrap.appendChild(note);
  return wrap;
 }
@@ -2527,10 +2527,7 @@ setTimeout(function(){try{var _ids=['landing','login','home','verify','setpw','s
  r.addEventListener('updatefound',function(){take(r.installing)});
  if(r.waiting){try{r.waiting.postMessage({type:'SKIP_WAITING'})}catch(e){}}
 }).catch(function(){});
-if(navigator.serviceWorker&&navigator.serviceWorker.addEventListener){navigator.serviceWorker.addEventListener('controllerchange',function(){
- if(!navigator.serviceWorker.controller)return;
- try{if(sessionStorage.getItem('ps_sw_reloaded'))return;sessionStorage.setItem('ps_sw_reloaded','1')}catch(e){}
- setTimeout(function(){location.reload()},300)})}
+
 document.addEventListener('visibilitychange',function(){if(!document.hidden){try{navigator.serviceWorker.getRegistration().then(function(r){r&&r.update()})}catch(e){}}})}catch(e){}}
 </script>
 <div class="bnav" id="bnav">
@@ -2736,7 +2733,7 @@ font-size:48px;background:linear-gradient(180deg,#5ee87f,#0f9d4f);color:#fff;box
 <div class="iv-slide"><b>&#10003;</b> Keep your streak alive</div>
 </div>
 <button class="iv-cta" onclick="ivExplore()">Explore Prime Scholars</button>
-<a class="iv-skip" onclick="ivExplore()">Skip to sign in</a>
+<a class="iv-skip" onclick="ivExplore()">Skip to sign in</a><a class="iv-fix" onclick="psRepair();return false">App not loading? Tap to repair</a>
 </div>
 </div>
 <div id="s-stage" class="hidden">
@@ -2830,6 +2827,7 @@ font-size:48px;background:linear-gradient(180deg,#5ee87f,#0f9d4f);color:#fff;box
 <style>
 /* ===== v46: Explore is a true gate ===== */
 #s-intro.hidden{display:none !important}
+#s-intro .iv-fix{display:block;text-align:center;font-size:11.5px;color:#7e9483 !important;margin:6px auto 0;text-decoration:underline;position:fixed;left:0;right:0;bottom:4px;z-index:99971}
 #s-intro:not(.hidden){position:fixed !important;inset:0;z-index:99950;background:#ffffff !important;overflow-y:auto}
 body.ivlock{overflow:hidden !important}
 </style>
