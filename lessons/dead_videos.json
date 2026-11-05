@@ -1,0 +1,25 @@
+{
+ "_readme": "Dead or unembeddable lesson videos for Prime Scholars. The app fetches this at boot and blanks any topic whose id appears here. Written by the weekly Lesson Watchdog sweep; do not edit by hand.",
+ "updated": "2026-11-05",
+ "swept": 1763,
+ "alive": 1746,
+ "ids": [
+  "EjwZ1e-X_XY",
+  "s8QR-4FV-CM",
+  "o6FkNFkpdCE",
+  "8Dg0qYxXSAo",
+  "Sah7JIajGPg",
+  "L-l-xJVL0Eg",
+  "vXc8eqqEzGc",
+  "sm2tCm3e4fM",
+  "vCtci5vLpmM",
+  "l1Q5eQ9YAi4",
+  "LSSzICSIQwI",
+  "daWLGQ76gkw",
+  "3jYXuTAXojY",
+  "Ru2ZgtLaOwE",
+  "EPzW3518oWc",
+  "vNxc-DS4sH0",
+  "2TpcNn2_QDU"
+ ]
+}
